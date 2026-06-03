@@ -1,0 +1,598 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   Life OS — Design System
+   4px grid · Dark-first · Dense but breathable
+   ============================================================ */
+
+@layer base {
+  * {
+    @apply border-gray-700;
+  }
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    @apply bg-gray-950 text-gray-100 font-sans;
+    font-feature-settings: "cv11", "ss01", "ss03";
+  }
+
+  /* Typography hierarchy ---------------------------------- */
+  h1 { @apply text-2xl font-semibold tracking-tight text-gray-100; }
+  h2 { @apply text-xl  font-semibold tracking-tight text-gray-100; }
+  h3 { @apply text-lg  font-semibold tracking-tight text-gray-100; }
+  h4 { @apply text-base font-semibold text-gray-100; }
+  small { @apply text-xs text-gray-500; }
+
+  /* Focus ring (accessibility) ---------------------------- */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-gray-950;
+  }
+  .light :focus-visible {
+    @apply ring-offset-white;
+  }
+
+  /* Selection */
+  ::selection { @apply bg-brand-500/30 text-gray-50; }
+}
+
+@layer components {
+
+  /* ===== Layout primitives ===== */
+  .page {
+    @apply p-6 space-y-6 animate-fade-in-up;
+  }
+  .page-header {
+    @apply flex items-center justify-between gap-4 mb-2;
+  }
+  .page-title {
+    @apply text-2xl font-semibold tracking-tight text-gray-100;
+  }
+  .page-subtitle {
+    @apply text-sm text-gray-500 mt-1;
+  }
+  .grid-cards {
+    @apply grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* ===== Cards ===== */
+  .card {
+    @apply bg-gray-900 rounded-xl border border-gray-800 p-5 shadow-card
+           transition-all duration-200 ease-out-expo;
+  }
+  .card-sm {
+    @apply bg-gray-900 rounded-lg border border-gray-800 p-4 shadow-card
+           transition-all duration-200 ease-out-expo;
+  }
+  .card-hover {
+    @apply card hover:-translate-y-1 hover:shadow-card-hover hover:border-gray-700 cursor-pointer;
+  }
+  .card-interactive {
+    @apply card-hover focus-within:border-brand-500/50 focus-within:shadow-glow-brand;
+  }
+  .card-elevated {
+    @apply card shadow-elevated;
+  }
+  /* Staggered entrance for grid cards */
+  .card-enter {
+    @apply animate-card-enter;
+  }
+  .card-header {
+    @apply flex items-center justify-between gap-3 mb-4;
+  }
+  .card-title {
+    @apply text-base font-semibold text-gray-100;
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg
+           font-medium text-sm leading-none cursor-pointer whitespace-nowrap select-none
+           transition-all duration-150 ease-out
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
+           active:scale-[0.97];
+  }
+  .btn-xs { @apply px-2 py-1 text-xs rounded-md; }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+  .btn-lg { @apply px-5 py-2.5 text-base; }
+
+  .btn-primary {
+    @apply btn bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white shadow-card hover:shadow-card-hover;
+  }
+  .btn-secondary {
+    @apply btn bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700;
+  }
+  .btn-outline {
+    @apply btn bg-transparent border border-gray-700 hover:border-gray-500 text-gray-200 hover:bg-gray-800/50;
+  }
+  .btn-ghost {
+    @apply btn bg-transparent hover:bg-gray-800 text-gray-400 hover:text-gray-100;
+  }
+  .btn-danger {
+    @apply btn bg-red-900/40 hover:bg-red-800/70 text-red-300 border border-red-900/50;
+  }
+  .btn-success {
+    @apply btn bg-emerald-900/40 hover:bg-emerald-800/70 text-emerald-300 border border-emerald-900/50;
+  }
+  .btn-icon {
+    @apply btn-ghost p-2 rounded-lg;
+  }
+  /* Small square icon-only button — used inline in rows/cards */
+  .icon-btn {
+    @apply inline-flex items-center justify-center p-1.5 rounded-md
+           text-gray-400 hover:text-gray-100 hover:bg-gray-800
+           transition-colors duration-150 cursor-pointer;
+  }
+
+  /* ===== Inputs ===== */
+  .input {
+    @apply w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2
+           text-gray-100 text-sm placeholder-gray-500
+           transition-all duration-150
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .input-sm { @apply px-2.5 py-1.5 text-xs rounded-md; }
+  .input-error {
+    @apply input border-red-500/60 focus:ring-red-500;
+  }
+  .textarea {
+    @apply input resize-y min-h-[80px];
+  }
+  .select {
+    @apply input appearance-none bg-no-repeat bg-right pr-9;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.6rem center;
+    background-size: 1.1em 1.1em;
+  }
+  .label {
+    @apply block text-xs font-medium text-gray-400 mb-1.5;
+  }
+  .helper-text {
+    @apply text-xs text-gray-500 mt-1;
+  }
+  .error-text {
+    @apply text-xs text-red-400 mt-1;
+  }
+  .checkbox {
+    @apply h-4 w-4 rounded border-gray-600 bg-gray-800 text-brand-500
+           focus:ring-2 focus:ring-brand-500 focus:ring-offset-0 cursor-pointer;
+  }
+
+  /* Floating label (optional, opt-in via .field-floating) */
+  .field-floating {
+    @apply relative;
+  }
+  .field-floating > .input {
+    @apply pt-5 pb-1.5;
+  }
+  .field-floating > .label {
+    @apply absolute left-3 top-2 text-[10px] uppercase tracking-wide pointer-events-none transition-all;
+  }
+
+  /* ===== Badges ===== */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+  .badge-gray   { @apply badge bg-gray-800 text-gray-300; }
+  .badge-brand  { @apply badge bg-brand-500/15 text-brand-400 border border-brand-500/20; }
+  .badge-green  { @apply badge bg-emerald-500/15 text-emerald-400 border border-emerald-500/20; }
+  .badge-red    { @apply badge bg-red-500/15 text-red-400 border border-red-500/20; }
+  .badge-amber  { @apply badge bg-amber-500/15 text-amber-400 border border-amber-500/20; }
+  .badge-blue   { @apply badge bg-blue-500/15 text-blue-400 border border-blue-500/20; }
+  .badge-purple { @apply badge bg-purple-500/15 text-purple-400 border border-purple-500/20; }
+  .badge-cyan   { @apply badge bg-cyan-500/15 text-cyan-400 border border-cyan-500/20; }
+  .badge-pink   { @apply badge bg-pink-500/15 text-pink-400 border border-pink-500/20; }
+  .badge-dot {
+    @apply inline-block w-1.5 h-1.5 rounded-full bg-current;
+  }
+
+  /* ===== Stats ===== */
+  .stat-card {
+    @apply card flex flex-col gap-1;
+  }
+  .stat-value {
+    @apply text-2xl font-bold text-gray-100 tracking-tight tabular-nums;
+  }
+  .stat-label {
+    @apply text-xs text-gray-500 uppercase tracking-wide font-medium;
+  }
+  .stat-sub {
+    @apply text-xs text-gray-500 truncate;
+  }
+  .stat-delta-up   { @apply text-xs font-medium text-emerald-400 inline-flex items-center gap-1; }
+  .stat-delta-down { @apply text-xs font-medium text-red-400 inline-flex items-center gap-1; }
+  .stat-delta-flat { @apply text-xs font-medium text-gray-500 inline-flex items-center gap-1; }
+
+  .section-title {
+    @apply text-lg font-semibold text-gray-100;
+  }
+
+  /* ===== Tables ===== */
+  .table-wrap {
+    @apply card p-0 overflow-hidden;
+  }
+  .table {
+    @apply w-full text-sm;
+  }
+  .table thead th {
+    @apply text-left px-4 py-3 text-xs text-gray-500 uppercase tracking-wide font-medium
+           bg-gray-900/60 border-b border-gray-800;
+  }
+  .table tbody td {
+    @apply px-4 py-3 border-b border-gray-800/60 text-gray-200;
+  }
+  .table tbody tr {
+    @apply transition-colors hover:bg-gray-800/40;
+  }
+  .table tbody tr:last-child td { @apply border-b-0; }
+  .table-header {
+    @apply text-xs text-gray-500 uppercase tracking-wide font-medium;
+  }
+
+  /* ===== Tabs ===== */
+  .tabs {
+    @apply flex items-center gap-1 border-b border-gray-800 relative;
+  }
+  .tab {
+    @apply relative px-4 py-2.5 text-sm font-medium text-gray-400
+           hover:text-gray-200 transition-colors cursor-pointer;
+  }
+  .tab-active {
+    @apply tab text-gray-100;
+  }
+  .tab-active::after {
+    content: '';
+    @apply absolute left-3 right-3 -bottom-px h-0.5 bg-current rounded-full
+           animate-fade-in;
+  }
+  /* Inactive tab state — mirrors base .tab but explicit for conditional class use */
+  .tab-inactive {
+    @apply text-gray-400 hover:text-gray-200;
+  }
+
+  /* Tab panel — apply to keyed content wrapper to animate on tab switch */
+  .tab-panel {
+    @apply animate-fade-in-up;
+  }
+
+  /* ===== Sidebar ===== */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium
+           transition-all duration-150 cursor-pointer;
+  }
+  .sidebar-link-active {
+    @apply sidebar-link bg-brand-500/15 text-brand-400 relative;
+  }
+  .sidebar-link-active::before {
+    content: '';
+    @apply absolute left-0 top-1.5 bottom-1.5 w-0.5 bg-brand-500 rounded-r;
+  }
+  .sidebar-link-inactive {
+    @apply sidebar-link text-gray-400 hover:bg-gray-800/60 hover:text-gray-100;
+  }
+  .sidebar-section {
+    @apply text-[10px] font-semibold uppercase tracking-[0.12em] text-gray-500 px-3 mt-4 mb-2;
+  }
+
+  /* ===== Modal helpers (Modal.jsx wraps these) ===== */
+  .modal-backdrop {
+    @apply fixed inset-0 z-50 bg-black/70 backdrop-blur-sm animate-fade-in;
+  }
+  .modal-panel {
+    @apply relative w-full bg-gray-900 rounded-2xl border border-gray-700
+           shadow-elevated animate-scale-in;
+  }
+
+  /* ===== Toasts ===== */
+  .toast {
+    @apply pointer-events-auto relative w-80 max-w-sm overflow-hidden
+           rounded-xl border bg-gray-900 shadow-elevated animate-toast-in;
+  }
+  .toast-success { @apply border-emerald-500/30; }
+  .toast-error   { @apply border-red-500/40; }
+  .toast-warning { @apply border-amber-500/40; }
+  .toast-info    { @apply border-brand-500/40; }
+  .toast-body {
+    @apply flex items-start gap-3 p-3.5;
+  }
+  .toast-progress {
+    @apply absolute bottom-0 left-0 h-0.5 bg-current opacity-60;
+  }
+
+  /* ===== Skeletons ===== */
+  .skeleton {
+    @apply rounded-md bg-gray-800;
+    background-image: linear-gradient(
+      90deg,
+      rgba(31, 41, 55, 1) 0%,
+      rgba(55, 65, 81, 1) 50%,
+      rgba(31, 41, 55, 1) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s linear infinite;
+  }
+  .skeleton-text { @apply skeleton h-3 w-full; }
+  .skeleton-title { @apply skeleton h-5 w-1/2; }
+  .skeleton-card { @apply skeleton h-28 w-full rounded-xl; }
+  .skeleton-circle { @apply skeleton rounded-full; }
+
+  /* ===== Empty states ===== */
+  .empty-state {
+    @apply flex flex-col items-center justify-center text-center
+           py-12 px-6 rounded-xl border border-dashed border-gray-800
+           bg-gray-900/30;
+  }
+  .empty-icon {
+    @apply w-12 h-12 rounded-full bg-gray-800 text-gray-500
+           flex items-center justify-center mb-4;
+  }
+  .empty-title {
+    @apply text-base font-semibold text-gray-200 mb-1;
+  }
+  .empty-desc {
+    @apply text-sm text-gray-500 max-w-sm mb-4;
+  }
+
+  /* ===== Dividers / chips ===== */
+  .divider {
+    @apply h-px bg-gray-800 my-4;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md
+           bg-gray-800/80 text-xs text-gray-300 border border-gray-700;
+  }
+  .kbd {
+    @apply inline-flex items-center justify-center min-w-[1.25rem] h-5 px-1.5
+           rounded border border-gray-700 bg-gray-800 text-[10px] font-mono
+           text-gray-300 shadow-card;
+  }
+
+  /* ===== Progress bars ===== */
+  .progress {
+    @apply w-full h-2 rounded-full bg-gray-800 overflow-hidden;
+  }
+  .progress-bar {
+    @apply h-full bg-brand-500 rounded-full transition-all duration-500 ease-out-expo;
+  }
+
+  /* ===== Page transitions ===== */
+  .page-transition {
+    @apply animate-page-enter;
+  }
+  /* Apply staggered delays to direct children (e.g. grid-cards children) */
+  .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
+  .stagger-children > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger-children > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger-children > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger-children > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger-children > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger-children > *:nth-child(7) { animation-delay: 240ms; }
+  .stagger-children > *:nth-child(8) { animation-delay: 280ms; }
+
+  /* ===== Chart containers ===== */
+  /* Wrap recharts ResponsiveContainer in a div with this class */
+  .chart-container {
+    @apply animate-page-enter;
+    transform-origin: bottom center;
+  }
+
+  /* ===== Module accent helpers ===== */
+  .accent-finance   { color: #10b981; }
+  .accent-health    { color: #ef4444; }
+  .accent-habits    { color: #f59e0b; }
+  .accent-mood      { color: #ec4899; }
+  .accent-reading   { color: #a855f7; }
+  .accent-projects  { color: #3b82f6; }
+  .accent-trading   { color: #06b6d4; }
+  .accent-travel    { color: #f97316; }
+  .accent-people    { color: #6366f1; }
+  .accent-wiki      { color: #6b7280; }
+  .accent-time      { color: #14b8a6; }
+  .accent-decisions { color: #eab308; }
+}
+
+/* ============================================================
+   Light mode overrides
+   ============================================================ */
+.light body {
+  @apply bg-gray-50 text-gray-900;
+}
+.light h1, .light h2, .light h3, .light h4 { @apply text-gray-900; }
+.light .card,
+.light .card-sm,
+.light .card-hover { @apply bg-white border-gray-200; }
+.light .card-hover:hover { @apply border-gray-300; }
+.light .card-elevated { @apply bg-white border-gray-200; }
+
+.light .input,
+.light .textarea,
+.light .select {
+  @apply bg-white border-gray-300 text-gray-900 placeholder-gray-400;
+}
+.light .label { @apply text-gray-600; }
+.light .helper-text { @apply text-gray-500; }
+
+.light .btn-secondary { @apply bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200; }
+.light .btn-outline   { @apply border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50; }
+.light .btn-ghost     { @apply text-gray-500 hover:bg-gray-100 hover:text-gray-900; }
+.light .btn-danger    { @apply bg-red-50 hover:bg-red-100 text-red-700 border-red-200; }
+.light .btn-success   { @apply bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200; }
+
+.light .sidebar-link-inactive { @apply text-gray-600 hover:bg-gray-100 hover:text-gray-900; }
+.light .sidebar-link-active { @apply bg-brand-500/10 text-brand-700; }
+.light .sidebar-section { @apply text-gray-500; }
+
+.light .table thead th { @apply bg-gray-50 border-gray-200 text-gray-500; }
+.light .table tbody td { @apply border-gray-100 text-gray-800; }
+.light .table tbody tr:hover { @apply bg-gray-50; }
+
+.light .tabs { @apply border-gray-200; }
+.light .tab { @apply text-gray-500 hover:text-gray-900; }
+.light .tab-active { @apply text-gray-900; }
+
+.light .badge-gray { @apply bg-gray-100 text-gray-700; }
+
+.light .toast { @apply bg-white; }
+
+.light .skeleton {
+  background-image: linear-gradient(
+    90deg,
+    rgba(229, 231, 235, 1) 0%,
+    rgba(243, 244, 246, 1) 50%,
+    rgba(229, 231, 235, 1) 100%
+  );
+}
+.light .empty-state { @apply border-gray-200 bg-white; }
+.light .empty-icon  { @apply bg-gray-100 text-gray-500; }
+.light .empty-title { @apply text-gray-900; }
+.light .empty-desc  { @apply text-gray-500; }
+.light .divider { @apply bg-gray-200; }
+.light .chip { @apply bg-gray-100 border-gray-200 text-gray-700; }
+.light .kbd  { @apply bg-white border-gray-300 text-gray-700; }
+.light .progress { @apply bg-gray-200; }
+.light .modal-panel { @apply bg-white border-gray-200; }
+.light .stat-value { @apply text-gray-900; }
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #4b5563; }
+.light ::-webkit-scrollbar-thumb { background: #d1d5db; }
+.light ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+/* ============================================================
+   Leaflet dark mode fix
+   ============================================================ */
+.dark .leaflet-tile {
+  filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+}
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   Responsive layout — mobile overrides
+   ============================================================ */
+
+/* Tighter page padding on mobile */
+@media (max-width: 767px) {
+  .page {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .page-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  /* Single column card grids on mobile */
+  .grid-cards {
+    grid-template-columns: 1fr;
+  }
+  /* Stat cards: 2-up on mobile */
+  .grid-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  /* Cards: reduce padding on mobile */
+  .card {
+    padding: 1rem;
+  }
+  .card-sm {
+    padding: 0.75rem;
+  }
+  /* Tables: horizontal scroll on mobile */
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Chart containers: full width, min height for touch */
+  .chart-container {
+    width: 100%;
+    min-height: 200px;
+  }
+}
+
+/* Tablet: 2-column card grids */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .grid-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ============================================================
+   Bottom navigation — mobile only
+   ============================================================ */
+@layer components {
+  .bottom-nav-item {
+    @apply flex flex-col items-center justify-center
+           min-w-[4rem] px-2 py-2 rounded-lg
+           transition-all duration-150 cursor-pointer
+           shrink-0 select-none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .bottom-nav-item-active {
+    @apply bg-brand-500/10;
+  }
+  .bottom-nav-item:active {
+    @apply scale-95 bg-gray-800;
+  }
+}
+
+/* Hide scrollbar on bottom nav strip (but keep scrollable) */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Safe area insets for devices with home indicator (iOS) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ============================================================
+   Touch-friendly chart improvements
+   ============================================================ */
+/* Recharts tooltip — larger on touch devices */
+@media (max-width: 767px) {
+  .recharts-tooltip-wrapper {
+    font-size: 12px !important;
+  }
+  /* Larger tap area for recharts dots/active shapes */
+  .recharts-dot,
+  .recharts-active-dot {
+    r: 6 !important;
+  }
+  /* Cartesian grid lines lighter on mobile */
+  .recharts-cartesian-grid-horizontal line,
+  .recharts-cartesian-grid-vertical line {
+    stroke-opacity: 0.3 !important;
+  }
+  /* Axis labels smaller */
+  .recharts-xAxis .recharts-cartesian-axis-tick-value,
+  .recharts-yAxis .recharts-cartesian-axis-tick-value {
+    font-size: 10px !important;
+  }
+}

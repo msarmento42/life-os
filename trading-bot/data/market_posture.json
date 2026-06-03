@@ -1,0 +1,14 @@
+{
+  "date": "2026-05-18",
+  "posture": "RISK_ON",
+  "position_size_multiplier": 1.0,
+  "notes": "Initialized at midday \u2014 premarket scan did not run",
+  "midday_update": {
+    "time": "19:41",
+    "previous_posture": "NEUTRAL",
+    "previous_multiplier": 0.65,
+    "spy_intraday_pct": 0.76,
+    "vix_now": 17.4,
+    "reason": "SPY up +0.76% intraday, VIX flat at 17.4 \u2014 conditions improved from morning NEUTRAL baseline"
+  }
+}
