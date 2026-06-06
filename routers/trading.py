@@ -5,7 +5,10 @@ from sqlalchemy import func
 from typing import Optional
 from datetime import date, timedelta
 from pydantic import BaseModel
+from collections import defaultdict
 import io, csv
+import math
+import statistics
 
 from database import get_db
 from models.trading import Strategy, Trade, Position, PortfolioSnapshot
@@ -53,6 +56,33 @@ class SnapshotCreate(BaseModel):
     notes: Optional[str] = None
 
 
+def _max_drawdown(trades):
+    cumulative = 0
+    peak = 0
+    max_drop = 0
+    for trade in sorted(trades, key=lambda t: (t.date, t.id or 0)):
+        cumulative += trade.pnl or 0
+        peak = max(peak, cumulative)
+        max_drop = max(max_drop, peak - cumulative)
+    return max_drop
+
+
+def _sharpe_ratio(trades):
+    daily_pnl = defaultdict(float)
+    for trade in trades:
+        daily_pnl[trade.date] += trade.pnl or 0
+
+    values = list(daily_pnl.values())
+    if len(values) < 2:
+        return 0
+
+    std_dev = statistics.stdev(values)
+    if std_dev == 0:
+        return 0
+
+    return statistics.mean(values) / std_dev * math.sqrt(252)
+
+
 # --- Strategies ---
 @router.get("/strategies")
 def get_strategies(db: Session = Depends(get_db)):
@@ -77,6 +107,37 @@ def create_strategy(data: StrategyCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(s)
     return s
+
+@router.get("/strategies/comparison")
+def get_strategy_comparison(db: Session = Depends(get_db)):
+    strategies = db.query(Strategy).filter(Strategy.is_active == True).all()
+    rows = []
+
+    for strategy in strategies:
+        trades = list(strategy.trades)
+        total_trades = len(trades)
+        wins = [t.pnl or 0 for t in trades if (t.pnl or 0) > 0]
+        losses = [t.pnl or 0 for t in trades if (t.pnl or 0) < 0]
+        gross_profit = sum(wins)
+        gross_loss = abs(sum(losses))
+        total_pnl = sum(t.pnl or 0 for t in trades)
+
+        rows.append({
+            "id": strategy.id,
+            "name": strategy.name,
+            "color": strategy.color,
+            "type": strategy.type,
+            "total_trades": total_trades,
+            "win_rate": round(len(wins) / total_trades * 100, 1) if total_trades else 0,
+            "avg_win": round(gross_profit / len(wins), 2) if wins else 0,
+            "avg_loss": round(gross_loss / len(losses), 2) if losses else 0,
+            "profit_factor": round(gross_profit / gross_loss, 2) if gross_loss else 0,
+            "total_pnl": round(total_pnl, 2),
+            "max_drawdown": round(_max_drawdown(trades), 2),
+            "sharpe_ratio": round(_sharpe_ratio(trades), 2),
+        })
+
+    return rows
 
 @router.delete("/strategies/{strategy_id}")
 def delete_strategy(strategy_id: int, db: Session = Depends(get_db)):
