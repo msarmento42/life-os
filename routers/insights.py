@@ -71,8 +71,11 @@ def compute_correlations(db: Session = Depends(get_db)):
             sleep_pairs.append((sleep.quality, next_mood.mood))
 
     workout_by_date = {}
-    for workout in db.query(Workout).filter(Workout.duration_min.isnot(None)).all():
-        workout_by_date[workout.date] = workout_by_date.get(workout.date, 0) + (workout.duration_min or 0)
+    workouts = db.query(Workout).filter(Workout.duration_min.isnot(None)).all()
+    for workout in workouts:
+        workout_by_date[workout.date] = (
+            workout_by_date.get(workout.date, 0) + (workout.duration_min or 0)
+        )
 
     exercise_pairs = []
     for workout_date, minutes in workout_by_date.items():
@@ -82,7 +85,10 @@ def compute_correlations(db: Session = Depends(get_db)):
 
     trade_pnl_by_date = {
         row.date: row.pnl or 0
-        for row in db.query(Trade.date, func.sum(Trade.pnl).label("pnl")).group_by(Trade.date).all()
+        for row in db.query(
+            Trade.date,
+            func.sum(Trade.pnl).label("pnl"),
+        ).group_by(Trade.date).all()
     }
     trading_pairs = [
         (log.mood, trade_pnl_by_date[log.date])
@@ -90,7 +96,7 @@ def compute_correlations(db: Session = Depends(get_db)):
         if log.mood is not None and log.date in trade_pnl_by_date
     ]
 
-    active_habits = db.query(Habit).filter(Habit.is_active == True).count() or 1
+    active_habits = db.query(Habit).filter(Habit.is_active.is_(True)).count() or 1
     habit_counts = {}
     habit_logs = db.query(HabitLog).all()
     for log in habit_logs:
@@ -104,20 +110,35 @@ def compute_correlations(db: Session = Depends(get_db)):
     ]
 
     correlations = [
-        _upsert_correlation(db, "sleep_quality", "mood_score", "Sleep -> next-day mood", sleep_pairs),
-        _upsert_correlation(db, "exercise_minutes", "energy", "Exercise -> next-day energy", exercise_pairs),
-        _upsert_correlation(db, "mood_score", "trading_pnl", "Mood -> trading P&L", trading_pairs),
-        _upsert_correlation(db, "habit_completion_rate", "mood_score", "Habits -> mood", habit_pairs),
+        _upsert_correlation(
+            db, "sleep_quality", "mood_score", "Sleep -> next-day mood", sleep_pairs
+        ),
+        _upsert_correlation(
+            db, "exercise_minutes", "energy", "Exercise -> next-day energy", exercise_pairs
+        ),
+        _upsert_correlation(
+            db, "mood_score", "trading_pnl", "Mood -> trading P&L", trading_pairs
+        ),
+        _upsert_correlation(
+            db, "habit_completion_rate", "mood_score", "Habits -> mood", habit_pairs
+        ),
     ]
 
     db.commit()
     for correlation in correlations:
         db.refresh(correlation)
 
-    return [_serialize(correlation) for correlation in sorted(correlations, key=lambda c: abs(c.coefficient), reverse=True)]
+    sorted_correlations = sorted(
+        correlations,
+        key=lambda correlation: abs(correlation.coefficient),
+        reverse=True,
+    )
+    return [_serialize(correlation) for correlation in sorted_correlations]
 
 
 @router.get("/correlations")
 def get_correlations(db: Session = Depends(get_db)):
-    correlations = db.query(Correlation).order_by(func.abs(Correlation.coefficient).desc()).all()
+    correlations = db.query(Correlation).order_by(
+        func.abs(Correlation.coefficient).desc()
+    ).all()
     return [_serialize(correlation) for correlation in correlations]
