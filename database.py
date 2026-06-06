@@ -5,7 +5,7 @@ from sqlalchemy.engine import Engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = f"sqlite:///./life_os.db"
+DATABASE_URL = "sqlite:///./life_os.db"
 
 
 @event.listens_for(Engine, "connect")
@@ -37,7 +37,7 @@ def get_db():
 
 def init_db():
     """Initialize all tables."""
-    from models import (
+    from models import (  # noqa: F401
         crm,
         decisions,
         fantasy,
