@@ -37,7 +37,23 @@ def get_db():
 
 def init_db():
     """Initialize all tables."""
-    from models import finance, travel, crm, health, habits, reading, projects, mood, trading, tasks, time_tracking, decisions, fantasy
+    from models import (
+        crm,
+        decisions,
+        fantasy,
+        finance,
+        habits,
+        health,
+        indexes,
+        mood,
+        projects,
+        reading,
+        tasks,
+        time_tracking,
+        trading,
+        travel,
+    )
+
     Base.metadata.create_all(bind=engine)
     # Additive migrations for columns added after initial table creation
     _run_migrations()
