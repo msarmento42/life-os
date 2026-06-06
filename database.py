@@ -45,6 +45,7 @@ def init_db():
         habits,
         health,
         indexes,
+        insights,
         mood,
         projects,
         reading,
