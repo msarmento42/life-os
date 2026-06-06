@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy } from 'lucide-react'
+import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy, LayoutDashboard, Settings } from 'lucide-react'
 
 const navSections = [
   {
     title: 'Daily',
     items: [
+      { to: '/dashboard', label: 'Dashboard',        icon: LayoutDashboard, color: 'text-brand-400' },
       { to: '/tasks',    label: 'Tasks',            icon: ListTodo,      color: 'text-violet-400' },
       { to: '/mood',     label: 'Mood & Energy',    icon: Smile,         color: 'text-pink-400' },
       { to: '/habits',   label: 'Habits & Routines', icon: CheckSquare,   color: 'text-amber-400' },
@@ -40,6 +41,12 @@ const navSections = [
     items: [
       { to: '/wiki',     label: 'Wiki',             icon: BookOpen,      color: 'text-gray-400' },
       { to: '/travel',   label: 'Travel',           icon: Plane,         color: 'text-orange-400' },
+    ]
+  },
+  {
+    title: 'System',
+    items: [
+      { to: '/settings', label: 'Settings',         icon: Settings,      color: 'text-gray-400' },
     ]
   }
 ]

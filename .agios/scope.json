@@ -1,0 +1,33 @@
+{
+  "allowed_paths": [
+    "main.py",
+    "database.py",
+    "models/**",
+    "routers/**",
+    "services/**",
+    "frontend/**",
+    "requirements.txt",
+    "setup.sh",
+    ".gitignore",
+    "README.md",
+    "BUILD-QUEUE.md",
+    "BUILD-LOG.md"
+  ],
+  "blocked_paths": [
+    ".github/**",
+    ".agios/**",
+    "*.env*",
+    "life_os.db",
+    "life_os.db-journal",
+    "logs/**",
+    "__pycache__/**"
+  ],
+  "infra_exception": {
+    "title_prefix": "agios infra:",
+    "allowed_paths": [
+      ".github/**",
+      ".agios/**",
+      "AGENTS.md"
+    ]
+  }
+}

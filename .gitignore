@@ -17,10 +17,15 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 node_modules/
+# Vite writes these transient config timestamps during builds
+frontend/vite.config.js.timestamp-*.mjs
 
 # Logs
 logs/
 *.log
+
+# Backups (local DB snapshots)
+backups/
 
 # OS
 .DS_Store

@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import axios from 'axios'
-import { Trophy, RefreshCw, Users, ArrowLeftRight, Wrench, Package } from 'lucide-react'
+import { Trophy, RefreshCw, Users, ArrowLeftRight, Wrench, Package, Newspaper } from 'lucide-react'
 import { useToast } from '../../components/Toast'
 import Roster from './Roster'
 import TradeProposals from './TradeProposals'
 import TradeBuilder from './TradeBuilder'
 import Picks from './Picks'
+import News from './News'
 
 const tabs = [
   { to: '',        label: 'Roster',          icon: Users,          end: true },
   { to: 'trades',  label: 'Trade Proposals', icon: ArrowLeftRight },
   { to: 'builder', label: 'Trade Builder',   icon: Wrench },
   { to: 'picks',   label: 'Picks',           icon: Package },
+  { to: 'news',    label: 'News',            icon: Newspaper },
 ]
 
 export default function Fantasy() {
@@ -159,6 +161,17 @@ export default function Fantasy() {
                   dash={dash}
                   loading={loading}
                   onSync={handleSync}
+                />
+              }
+            />
+            <Route
+              path="news"
+              element={
+                <News
+                  dash={dash}
+                  loading={loading}
+                  onSync={handleSync}
+                  syncing={syncing}
                 />
               }
             />

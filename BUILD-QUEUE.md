@@ -10,12 +10,12 @@
 
 > The build agent must build the first item in THIS list that is not yet `[x]`, before falling back to normal file order. Goal: make the Dynasty Fantasy calculator usable, then bring Life OS to a stable, daily-usable state.
 >
-> 1. **SF.03** — Fantasy: Trade proposal dashboard
-> 2. **SF.04** — Fantasy: Trade builder
+> ~~1. **SF.03** — Fantasy: Trade proposal dashboard~~ ✅
+> ~~2. **SF.04** — Fantasy: Trade builder~~ ✅
 > ~~3. **SF.05** — Fantasy: Pick inventory + valuation~~ ✅
-> 4. **SF.06** — Fantasy: News & alerts panel  ← *Dynasty calculator is usable after this*
-> 5. **S9.01 (Dashboard)** — Daily dashboard (Life OS home screen)
-> 6. **S10.01** — Backup system (one-click export/restore)
+> ~~4. **SF.06** — Fantasy: News & alerts panel~~ ✅
+> ~~5. **S9.01 (Dashboard)** — Daily dashboard (Life OS home screen)~~ ✅
+> ~~6. **S10.01** — Backup system (one-click export/restore)~~ ✅
 > 7. **S10.03** — Performance: SQLite indexes + WAL mode
 > 8. **S10.06** — Final QA pass  ← *Life OS is stable/daily-usable after this*
 >
@@ -166,7 +166,7 @@ Scheduled Cowork sessions run automatically and:
 
 - [x] **SF.05** — Fantasy frontend: Pick inventory + valuation — per-league view of all tradeable future picks (2027, 2028). Shows estimated value, original owner, whether it's your own pick or acquired. Picks can be added to trade builder. *(completed 2026-06-02)*
 
-- [ ] **SF.06** — Fantasy frontend: News & alerts panel — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section.
+- [x] **SF.06** — Fantasy frontend: News & alerts panel — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section. *(completed 2026-06-03)*
 
 - [ ] **SF.07** — Fantasy: Pick valuation model refinement + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."
 
@@ -194,7 +194,7 @@ Scheduled Cowork sessions run automatically and:
 > Daily, weekly, monthly, quarterly views.
 > ⚠️ **Note:** Items below use S9.xx codes due to a numbering collision with Sprint 9 (Trading). These are dashboard items, not trading items. Build sessions: read this sprint header to disambiguate.
 
-- [ ] **S9.01** *(Dashboard)* — Daily dashboard: today's mood/energy check-in, habit checklist, time blocks (planned), top priority project, trading alerts if positions exist, data quality pulse.
+- [x] **S9.01** *(Dashboard)* — Daily dashboard: today's mood/energy check-in, habit checklist, time blocks (planned), top priority project, trading alerts if positions exist, data quality pulse. *(completed 2026-06-03)*
 - [ ] **S9.02** *(Dashboard)* — Weekly dashboard: mood trend line, time allocation pie (actual vs. plan), habit completion %, project progress bars, spending summary, relationships needing attention.
 - [ ] **S9.03** *(Dashboard)* — Monthly dashboard: net worth change + velocity, weight/body trend, habit streaks (best/worst), reading progress, mood averages, spending anomalies.
 - [ ] **S9.04** *(Dashboard)* — Quarterly dashboard: OKR progress with post-mortem prompts, savings goal progress, time vs. priorities alignment, trading strategy review, decision journal hit rate analysis.
@@ -203,7 +203,7 @@ Scheduled Cowork sessions run automatically and:
 
 > Ship-quality reliability and fit-and-finish.
 
-- [ ] **S10.01** — Backup system: one-click JSON export of entire database, timestamped file, import/restore endpoint. Frontend: Settings page with backup/restore buttons + last backup date.
+- [x] **S10.01** — Backup system: one-click JSON export of entire database, timestamped file, import/restore endpoint. Frontend: Settings page with backup/restore buttons + last backup date. *(completed 2026-06-04 — routers/backup.py: export/status/history/import/restore/delete; schema-agnostic full-DB snapshot; safety snapshot before restore. frontend/src/modules/Settings: stats, export download, file restore, history with restore/delete, >7-day reminder. Added to Sidebar "System" section + BottomNav. Backend verified with 28-assertion TestClient suite incl. destructive wipe/restore round-trip; frontend vite build passes (2731 modules).)*
 - [ ] **S10.02** — Database migrations: set up Alembic for schema versioning. Create initial migration from current state.
 - [ ] **S10.03** — Performance: add SQLite indexes on all date columns + foreign keys. Enable WAL mode. Measure and optimize slow queries.
 - [ ] **S10.04** — Code splitting: lazy-load each module in React (React.lazy + Suspense). Verify bundle sizes.
@@ -238,11 +238,11 @@ Scheduled Cowork sessions run automatically and:
 | S7: Habits & Mood | 4 | 4 | ✅ Complete |
 | S8: Projects/CRM/Reading | 5 | 5 | ✅ Complete |
 | S8.5: Spec Gaps & Quick Wins | 11 | 11 | ✅ Complete |
-| SF: Dynasty Fantasy Calculator | 8 | 5 | 🟡 In progress (SF.06 next) |
+| SF: Dynasty Fantasy Calculator | 8 | 6 | 🟡 In progress (SF.07 next) |
 | S9: Trading Depth | 2 | 0 | Not started |
 | S10: Intelligence | 5 | 0 | Not started |
-| S11: Dashboards | 4 | 0 | Not started |
-| S12: Polish & Ship | 6 | 0 | Not started |
-| **Total** | **72** | **56** | — |
+| S11: Dashboards | 4 | 1 | 🟡 In progress (S9.02 next) |
+| S12: Polish & Ship | 6 | 1 | 🟡 In progress (S10.03 next) |
+| **Total** | **72** | **58** | — |
 
-*Last updated: 2026-06-02 — SF.05 complete (Pick Inventory). 14 items remaining.*
+*Last updated: 2026-06-04 — S10.01 (Backup system) complete. 11 items remaining.*

@@ -5,7 +5,7 @@
  */
 
 import { NavLink } from 'react-router-dom'
-import { DollarSign, Plane, Users, BookOpen, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Sun, Moon, ListTodo, Clock, Scale } from 'lucide-react'
+import { DollarSign, Plane, Users, BookOpen, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Sun, Moon, ListTodo, Clock, Scale, Settings } from 'lucide-react'
 
 const navItems = [
   { to: '/tasks',    label: 'Tasks',    icon: ListTodo,     color: 'text-violet-400'  },
@@ -21,6 +21,7 @@ const navItems = [
   { to: '/crm',      label: 'People',   icon: Users,        color: 'text-indigo-400'  },
   { to: '/travel',   label: 'Travel',   icon: Plane,        color: 'text-orange-400'  },
   { to: '/wiki',     label: 'Wiki',     icon: BookOpen,     color: 'text-gray-400'    },
+  { to: '/settings', label: 'Settings', icon: Settings,     color: 'text-gray-400'    },
 ]
 
 export default function BottomNav({ darkMode, toggleDark }) {

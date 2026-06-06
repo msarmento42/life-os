@@ -1587,3 +1587,63 @@ Full post-mortem feature for completed/abandoned projects:
 - **Files modified:** `routers/fantasy.py`, `frontend/src/modules/Fantasy/index.jsx`, `frontend/src/modules/Fantasy/TradeBuilder.jsx`
 - **Build:** ✓ 2728 modules transformed, built successfully
 - **Next item:** SF.06 — News & alerts panel (ESPN news filtered to roster players, value movers widget, Fantasy sidebar nav entry)
+
+## 2026-06-03 — SF.06: Fantasy News & Alerts panel
+- Built `frontend/src/modules/Fantasy/News.jsx` — full News & alerts panel (361 lines)
+  - Severity-filtered ESPN news feed (urgent / notable / fyi) with expandable descriptions
+  - Alert badge in header showing urgent count
+  - Filter pills per severity with item counts
+  - Value risers/fallers widget (30-day movers, split two-column grid)
+  - Trending adds from Sleeper (3-column grid, last 24h)
+  - Inline "Refresh" button hits POST /api/fantasy/sync/news (fast news-only sync)
+  - Skeleton + empty states for all data-absent scenarios
+- Updated `frontend/src/modules/Fantasy/index.jsx`
+  - Added `News` import and `Newspaper` icon from lucide-react
+  - Added 5th tab: "News" → `/fantasy/news`
+  - Added nested Route `path="news"` rendering `<News />`
+- Files created: `News.jsx`
+- Files modified: `index.jsx`
+- No backend changes needed — `/api/fantasy/news`, `/api/fantasy/players/movers`, `/api/fantasy/players/trending` already existed
+- Build: frontend build skipped (sandbox disk full); JSX validated via Node.js structure checks (brace balance ✓, exports ✓)
+- Next item: SF.07 — Pick valuation model refinement + pick-inclusive trade proposals
+
+## 2026-06-03 — S9.01 (Dashboard): Daily Dashboard
+
+- **What was built:** Full daily dashboard — `/dashboard` route, new home screen for Life OS. Aggregates mood/energy (today's scores + 7-day trend), habit completion (chip row + progress bar), tasks due today with overdue count, time blocks logged today with category breakdown, top active project card, trading portfolio with open position P&L, and a data quality pulse (30-day completeness bars for mood/habits/tasks).
+- **Backend:** `routers/dashboard.py` — new `/api/dashboard/daily` endpoint. Pulls from mood, habits, tasks, time_tracking, projects, and trading models in a single aggregated response. Registered in `main.py`.
+- **Frontend:** `frontend/src/modules/Dashboard/index.jsx` — score rings for mood/energy/stress, habit icon chips (greyed when incomplete), task list with priority dots, time breakdown mini-bars, project card, position P&L table, quality bars. Loading skeleton + error state included.
+- **Navigation:** Dashboard added as first item in Daily section of `Sidebar.jsx`. Default route changed from `/tasks` to `/dashboard` in `AnimatedRoutes.jsx`.
+- **Build:** `NODE_ENV=development npm run build` — ✓ 2758 modules, 4.12s. (npm install required NODE_ENV=development to resolve devDependencies on this machine.)
+- **Issues:** Sandbox disk-full prevented in-sandbox npm build; used Desktop Commander to build on host. vite not on PATH — used `NODE_ENV=development npm run build` workaround.
+- **Next item:** S10.01 — Backup system (one-click export/restore)
+
+## 2026-06-04 — S10.01: Backup system (one-click export / restore)
+
+- **What was built:** Full local backup & restore for the entire SQLite database, plus a new Settings page. One-click JSON export of every table (timestamped, also saved to `./backups/`), restore from an uploaded file or from a stored backup, last-backup tracking with a >7-day reminder, and a backup history list with per-file restore/delete.
+- **Backend:** `routers/backup.py` (new), registered in `main.py`. Endpoints (prefix `/api/backup`):
+  - `GET /export` — builds a schema-agnostic snapshot (`meta` + `tables`) by introspecting `sqlite_master`, so new modules are captured automatically with no code changes here. Saves a timestamped copy to `backups/life-os-backup-YYYYMMDD-HHMMSS.json` and streams it back as a download (Content-Disposition).
+  - `GET /status` — last-backup timestamp, `days_since`, `reminder_due` (≥7 days or never), backup count + total size, and current-DB table/row counts.
+  - `GET /history` — stored backups (filename, created_at, size, kind: manual vs auto-safety).
+  - `POST /import` — restore from an uploaded backup (multipart). Takes an automatic `pre-restore-*` safety snapshot first, then wipes + reloads every table inside one transaction (FK enforcement toggled off for the load; rolls back cleanly on any error so a bad file leaves data untouched).
+  - `POST /restore/{filename}` — restore from a backup already on disk (same safety-snapshot + transaction path).
+  - `DELETE /history/{filename}` — remove a stored backup. Filenames validated against a strict regex + path-confined to `backups/` (traversal blocked).
+- **Frontend:** `frontend/src/modules/Settings/index.jsx` (new). Stat cards (last backup / current DB size / backups stored), Export button (blob download), "Restore from File" (hidden file input → `ConfirmModal`), amber reminder banner when overdue, and a backup-history list with per-row Restore/Delete (each behind a `ConfirmModal`). Uses existing `useToast`, `SkeletonCard`, `.card`/`.btn-*`/`.badge`/`.empty-state` classes; full loading/empty/error states; dark-mode native.
+- **Navigation:** new "System" section in `Sidebar.jsx` with Settings (gear icon); Settings appended to `BottomNav.jsx`; `/settings` route added to `AnimatedRoutes.jsx`.
+- **Files created:** `routers/backup.py`, `frontend/src/modules/Settings/index.jsx`
+- **Files modified:** `main.py`, `frontend/src/components/AnimatedRoutes.jsx`, `frontend/src/components/Sidebar.jsx`, `frontend/src/components/BottomNav.jsx`, `.gitignore` (ignore `backups/` and stray `vite.config.js.timestamp-*.mjs`)
+- **Testing:**
+  - Backend — ran a 28-assertion FastAPI `TestClient` suite against an isolated **copy** of `life_os.db` (never the live DB). Verified: status (58 tables / 2,236 rows), export shape + download header, a destructive round-trip (wiped the 1,658-row `fantasy_value_snapshots` table then restored it exactly via `/import`), restore-from-disk, safety-snapshot creation, reminder clears after backup, and negatives (garbage→400, missing `tables`→400, missing file→404, path-traversal blocked, invalid delete name→400). All passed. Also ran the literal models import check — `Models OK`.
+  - Frontend — real `vite build` succeeded: **✓ 2731 modules transformed, built in 6.35s** (output written to a temp dir; see caveat below).
+- **Issues / caveats for next session (Mac):**
+  - **`dist/` not republished from the sandbox.** The existing `frontend/dist/` was written by macOS and is immutable over the virtiofs mount (EPERM on unlink), so the production bundle couldn't be regenerated in place. The Settings page is fully built and compiles — it just needs a **`cd frontend && npm run build` on the Mac** to appear in the served app.
+  - **`frontend/package-lock.json` shows as modified.** To actually run `vite build` for verification on this aarch64 Linux sandbox I transiently installed the Linux native shims (`@rollup/rollup-linux-arm64-gnu`, `@esbuild/linux-arm64`, `--no-save`, gitignored); npm reconciled and rewrote the lockfile. The on-disk `node_modules` and the macOS natives (`@esbuild/darwin-arm64`, `@rollup/rollup-darwin-arm64`) are intact, so the Mac build is unaffected. Restore with `git checkout frontend/package-lock.json` (or `npm install`) — it self-heals.
+- **Next item:** S10.03 — Performance: SQLite indexes on date columns + FKs, enable WAL mode (per NEXT-UP priority order; then S10.06 final QA).
+
+## 2026-06-05 — S10.03: No issue created (already queued)
+
+- **Run type:** life-os-build planner. Gate check passed (prior gate 2026-06-04 S10.01 = SUCCESS, ~38h old; not a recent FAILED).
+- **Selected item:** S10.03 — Performance: SQLite indexes on date/FK columns + enable WAL mode (first unchecked in NEXT-UP priority order; S10.01 now done).
+- **Action: NO ISSUE CREATED.** S10.03 already has an open GitHub issue — **#2** "S10.03: performance — SQLite WAL mode + indexes on date and FK columns" (label `agios:ready-for-codex`). Skipped duplicate per the dedup rule + one-issue-per-run.
+- **⚠️ Pipeline anomaly flagged:** all 5 open `ready-for-codex` issues were created in a single ~76-second burst at 21:04–21:06Z today (~5 min before this run): #1 S9.01, #2 S10.03, #3 S8.01+02, #4 S8.03, #5 S10.06. That contradicts the "one issue per run" design — recommend auditing scheduled-task fire cadence (cf. CLAUDE.md "audit the scheduled-task pipeline"; the trading-bot pipeline has been double-/mis-firing too). 0 `ready-for-codex` issues have ever been closed — though all are <10 min old, so Codex may simply not have picked them up yet.
+- **Environment note:** `gh` CLI not available in this run's sandbox; used the GitHub REST API (stored PAT) for read + dedup checks only. No POST/write to GitHub performed.
+- **Next in queue (already queued):** S10.06 — final QA pass (open issue #5).

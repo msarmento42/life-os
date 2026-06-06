@@ -26,6 +26,8 @@ import Trading from '../modules/Trading'
 import TimeAttention from '../modules/TimeAttention'
 import Decisions from '../modules/Decisions'
 import Fantasy from '../modules/Fantasy'
+import Dashboard from '../modules/Dashboard'
+import Settings from '../modules/Settings'
 
 export default function AnimatedRoutes() {
   const location = useLocation()
@@ -36,7 +38,8 @@ export default function AnimatedRoutes() {
   return (
     <div key={pageKey} className="page-transition h-full">
       <Routes location={location}>
-        <Route path="/" element={<Navigate to="/tasks" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/tasks/*" element={<Tasks />} />
         <Route path="/finance/*" element={<Finance />} />
         <Route path="/health/*" element={<Health />} />
@@ -51,6 +54,7 @@ export default function AnimatedRoutes() {
         <Route path="/time/*" element={<TimeAttention />} />
         <Route path="/decisions/*" element={<Decisions />} />
         <Route path="/fantasy/*" element={<Fantasy />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </div>
   )
