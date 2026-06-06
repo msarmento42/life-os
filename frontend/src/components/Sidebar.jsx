@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy } from 'lucide-react'
+import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy, Brain } from 'lucide-react'
 
 const navSections = [
   {
@@ -24,6 +24,7 @@ const navSections = [
   {
     title: 'Growth',
     items: [
+      { to: '/insights',  label: 'Insights',          icon: Brain,       color: 'text-fuchsia-400' },
       { to: '/trading',   label: 'Trading & Portfolio', icon: TrendingUp,  color: 'text-cyan-400'   },
       { to: '/reading',   label: 'Reading List',      icon: Library,       color: 'text-purple-400' },
       { to: '/decisions', label: 'Decision Journal',  icon: Scale,         color: 'text-yellow-400' },
