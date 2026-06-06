@@ -5,7 +5,7 @@ from fastapi.responses import FileResponse
 from pathlib import Path
 
 from database import init_db
-from routers import finance, travel, crm, wiki, health, habits, reading, projects, mood, trading, search, tasks, time_tracking, decisions, fantasy
+from routers import finance, travel, crm, wiki, health, habits, reading, projects, mood, trading, search, tasks, time_tracking, decisions, fantasy, insights
 
 app = FastAPI(title="Life OS API", version="1.0.0")
 
@@ -34,6 +34,7 @@ app.include_router(tasks.router)
 app.include_router(time_tracking.router)
 app.include_router(decisions.router)
 app.include_router(fantasy.router)
+app.include_router(insights.router)
 
 
 @app.on_event("startup")
