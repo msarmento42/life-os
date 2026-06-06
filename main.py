@@ -5,7 +5,24 @@ from fastapi.responses import FileResponse
 from pathlib import Path
 
 from database import init_db
-from routers import finance, travel, crm, wiki, health, habits, reading, projects, mood, trading, search, tasks, time_tracking, decisions, fantasy, insights
+from routers import (
+    crm,
+    decisions,
+    fantasy,
+    finance,
+    habits,
+    health,
+    insights,
+    mood,
+    projects,
+    reading,
+    search,
+    tasks,
+    time_tracking,
+    trading,
+    travel,
+    wiki,
+)
 
 app = FastAPI(title="Life OS API", version="1.0.0")
 
