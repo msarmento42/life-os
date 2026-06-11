@@ -1,24 +1,68 @@
 name: Auto-Merge on CI Pass
 
 on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
 
 permissions:
   contents: write
   pull-requests: write
 
 jobs:
-  enable-auto-merge:
-    name: Enable auto-merge
+  policy-gate:
+    name: Policy-gated auto-merge
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+      RUN_ID: ${{ github.event.workflow_run.id }}
     steps:
-      - name: Enable auto-merge (squash)
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check gates and enable auto-merge
         run: |
-          gh pr merge "${{ github.event.pull_request.number }}" \
-            --repo "${{ github.repository }}" \
+          # Get PR number from the workflow run
+          PR=$(gh api "repos/$REPO/actions/runs/$RUN_ID" \
+            --jq '.pull_requests[0].number // empty' 2>/dev/null)
+
+          if [ -z "$PR" ]; then
+            echo "No PR associated with this run — skipping"
+            exit 0
+          fi
+
+          echo "Checking gates for PR #$PR..."
+
+          # Get PR body
+          PR_BODY=$(gh pr view "$PR" --repo "$REPO" --json body --jq '.body')
+
+          # Gate 1: PR body must contain Closes #N
+          if ! echo "$PR_BODY" | grep -qiE "closes?\\s+#[0-9]+"; then
+            echo "SKIP: PR #$PR has no 'Closes #N' — auto-merge not enabled"
+            exit 0
+          fi
+
+          # Extract issue number
+          ISSUE=$(echo "$PR_BODY" | grep -ioE "closes?\\s+#[0-9]+" | grep -oE "[0-9]+" | head -1)
+          echo "  Linked issue: #$ISSUE"
+
+          # Get issue body
+          ISSUE_BODY=$(gh issue view "$ISSUE" --repo "$REPO" --json body --jq '.body')
+
+          # Gate 2: issue must have Auto-merge allowed: yes
+          if ! echo "$ISSUE_BODY" | grep -qiE "\\*\\*Auto-merge allowed:\\*\\*\\s*yes"; then
+            echo "SKIP: Issue #$ISSUE does not have 'Auto-merge allowed: yes'"
+            exit 0
+          fi
+
+          # Gate 3: issue must NOT have Risk level: HIGH
+          if echo "$ISSUE_BODY" | grep -qiE "\\*\\*Risk level:\\*\\*\\s*HIGH"; then
+            echo "SKIP: Issue #$ISSUE has Risk level: HIGH — manual review required"
+            exit 0
+          fi
+
+          # All gates passed — enable auto-merge
+          echo "All gates passed — enabling auto-merge (squash) for PR #$PR"
+          gh pr merge "$PR" \
+            --repo "$REPO" \
             --auto \
-            --squash \
-            --subject "${{ github.event.pull_request.title }}"
+            --squash
