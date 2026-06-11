@@ -28,3 +28,6 @@ logs/
 # IDE
 .vscode/
 .idea/
+
+# Vite build artifacts
+frontend/vite.config.js.timestamp-*
