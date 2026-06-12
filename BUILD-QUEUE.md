@@ -166,9 +166,9 @@ Scheduled Cowork sessions run automatically and:
 
 - [x] **SF.05** — Fantasy frontend: Pick inventory + valuation — per-league view of all tradeable future picks (2027, 2028). Shows estimated value, original owner, whether it's your own pick or acquired. Picks can be added to trade builder. *(completed 2026-06-02)*
 
-- [ ] **SF.06** — Fantasy frontend: News & alerts panel — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section.
+- [ ] **SF.06** — Fantasy frontend: News & alerts panel [issued #17] — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section.
 
-- [ ] **SF.07** — Fantasy: Pick valuation model refinement + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."
+- [ ] **SF.07** — Fantasy: Pick valuation model refinement [issued #18] + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."
 
 - [ ] **SF.08** — Fantasy: Historical trade ingestion — pull all `trade` transactions from Sleeper for all 3 leagues. Store in SQLite. Build observed value dataset (player A traded for player B). Compute league-specific calibration factor vs. FantasyCalc. Surface divergences: "this league pays 20% more for QBs than FantasyCalc suggests."
 
