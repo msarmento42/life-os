@@ -170,7 +170,7 @@ Scheduled Cowork sessions run automatically and:
 
 - [ ] **SF.07** — Fantasy: Pick valuation model refinement [issued #18] + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."
 
-- [ ] **SF.08** — Fantasy: Historical trade ingestion — pull all `trade` transactions from Sleeper for all 3 leagues. Store in SQLite. Build observed value dataset (player A traded for player B). Compute league-specific calibration factor vs. FantasyCalc. Surface divergences: "this league pays 20% more for QBs than FantasyCalc suggests."
+- [ ] **SF.08** — Fantasy: Historical trade ingestion [issued #24] — pull all `trade` transactions from Sleeper for all 3 leagues. Store in SQLite. Build observed value dataset (player A traded for player B). Compute league-specific calibration factor vs. FantasyCalc. Surface divergences: "this league pays 20% more for QBs than FantasyCalc suggests."
 
 ## Sprint 9: Trading Depth
 
@@ -246,5 +246,3 @@ Scheduled Cowork sessions run automatically and:
 | **Total** | **72** | **56** | — |
 
 *Last updated: 2026-06-02 — SF.05 complete (Pick Inventory). 14 items remaining.*
-
-
