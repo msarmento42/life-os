@@ -208,7 +208,7 @@ Scheduled Cowork sessions run automatically and:
 - [ ] **S10.03** — Performance: add SQLite indexes on all date columns + foreign keys. Enable WAL mode. Measure and optimize slow queries. [issued #21]
 - [ ] **S10.04** — Code splitting: lazy-load each module in React (React.lazy + Suspense). Verify bundle sizes. [issued #22]
 - [ ] **S10.05** — Keyboard shortcuts: document all shortcuts, add help overlay (Cmd+?), ensure all major actions have keyboard shortcuts.
-- [ ] **S10.06** — Final QA: smoke test every module's CRUD, verify all charts render, test dark/light mode toggle, test responsive breakpoints, fix any visual inconsistencies.
+- [ ] **S10.06** — Final QA: smoke test every module's CRUD, verify all charts render, test dark/light mode toggle, test responsive breakpoints, fix any visual inconsistencies. [issued #23]
 
 ---
 
@@ -246,3 +246,5 @@ Scheduled Cowork sessions run automatically and:
 | **Total** | **72** | **56** | — |
 
 *Last updated: 2026-06-02 — SF.05 complete (Pick Inventory). 14 items remaining.*
+
+
