@@ -176,8 +176,8 @@ Scheduled Cowork sessions run automatically and:
 
 > Strategy analytics, discipline scoring, trip reflections.
 
-- [ ] **S9.01** — Trading: strategy comparison dashboard — win rate, avg win/loss ratio, Sharpe ratio, max drawdown, profit factor per strategy. Frontend: strategy comparison table + radar chart.
-- [ ] **S9.02** — Trading: add `followed_system` (boolean), `decision_id` (FK nullable) to trades. Behavioral discipline score (% of trades where system was followed). Frontend: discipline tracker.
+- [x] **S9.01** — Trading: strategy comparison dashboard — win rate, avg win/loss ratio, Sharpe ratio, max drawdown, profit factor per strategy. Frontend: strategy comparison table + radar chart. *(already implemented — StrategyComparison.jsx + /api/trading/strategies/comparison live; completed 2026-06-18)*
+- [ ] **S9.02** — Trading: add `followed_system` (boolean), `decision_id` (FK nullable) to trades. Behavioral discipline score (% of trades where system was followed). Frontend: discipline tracker. [issued #25]
 
 ## Sprint 10: Cross-Module Intelligence
 
@@ -246,3 +246,4 @@ Scheduled Cowork sessions run automatically and:
 | **Total** | **72** | **56** | — |
 
 *Last updated: 2026-06-02 — SF.05 complete (Pick Inventory). 14 items remaining.*
+
