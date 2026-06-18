@@ -183,7 +183,7 @@ Scheduled Cowork sessions run automatically and:
 
 > Correlation engine, weekly synthesis, burnout warning, data quality.
 
-- [ ] **S8.01** — Correlation engine backend: `correlations` table (entity_a, entity_b, coefficient, sample_size, computed_at). Compute pairwise correlations across all date-indexed modules. Endpoint: GET /api/insights/correlations.
+- [ ] **S8.01** — Correlation engine backend: `correlations` table (entity_a, entity_b, coefficient, sample_size, computed_at). Compute pairwise correlations across all date-indexed modules. Endpoint: GET /api/insights/correlations. [issued #26]
 - [ ] **S8.02** — Correlation engine frontend: "Insights" page with ranked correlation cards (e.g., "Sleep quality → next-day mood: +0.72"), filterable by module pair.
 - [ ] **S8.03** — Weekly synthesis endpoint: aggregate all module data for the past 7 days into a structured report (movements, anomalies, connections, pending decisions). Frontend: "Weekly Review" page.
 - [ ] **S8.04** — Burnout early warning: composite signal from sleep + mood + habits + stress + recovery. Endpoint returns risk level + recommended interventions. Frontend: warning banner on dashboard when risk is elevated.
