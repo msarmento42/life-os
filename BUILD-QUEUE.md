@@ -196,7 +196,7 @@ Scheduled Cowork sessions run automatically and:
 
 - [ ] **S9.01** *(Dashboard)* — Daily dashboard: today's mood/energy check-in, habit checklist, time blocks (planned), top priority project, trading alerts if positions exist, data quality pulse. [issued #19]
 - [ ] **S9.02** *(Dashboard)* — Weekly dashboard: mood trend line, time allocation pie (actual vs. plan), habit completion %, project progress bars, spending summary, relationships needing attention. [issued #30]
-- [ ] **S9.03** *(Dashboard)* — Monthly dashboard: net worth change + velocity, weight/body trend, habit streaks (best/worst), reading progress, mood averages, spending anomalies.
+- [ ] **S9.03** *(Dashboard)* — Monthly dashboard: net worth change + velocity, weight/body trend, habit streaks (best/worst), reading progress, mood averages, spending anomalies. [issued #31]
 - [ ] **S9.04** *(Dashboard)* — Quarterly dashboard: OKR progress with post-mortem prompts, savings goal progress, time vs. priorities alignment, trading strategy review, decision journal hit rate analysis.
 
 ## Sprint 12: Backup, Performance, Final Polish
