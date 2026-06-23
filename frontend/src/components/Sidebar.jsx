@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy, Brain } from 'lucide-react'
+import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy, Brain, CalendarDays } from 'lucide-react'
 
 const navSections = [
   {
     title: 'Daily',
     items: [
       { to: '/tasks',    label: 'Tasks',            icon: ListTodo,      color: 'text-violet-400' },
+      { to: '/dashboard/weekly', label: 'Weekly Review', icon: CalendarDays, color: 'text-purple-400' },
       { to: '/mood',     label: 'Mood & Energy',    icon: Smile,         color: 'text-pink-400' },
       { to: '/habits',   label: 'Habits & Routines', icon: CheckSquare,   color: 'text-amber-400' },
       { to: '/time',     label: 'Time & Attention', icon: Clock,         color: 'text-teal-400' },
