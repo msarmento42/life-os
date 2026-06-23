@@ -5,13 +5,14 @@
  */
 
 import { NavLink } from 'react-router-dom'
-import { DollarSign, Plane, Users, BookOpen, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Sun, Moon, ListTodo, Clock, Scale, Brain } from 'lucide-react'
+import { DollarSign, Plane, Users, BookOpen, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Sun, Moon, ListTodo, Clock, Scale, Brain, BarChart3 } from 'lucide-react'
 
 const navItems = [
   { to: '/tasks',    label: 'Tasks',    icon: ListTodo,     color: 'text-violet-400'  },
   { to: '/mood',     label: 'Mood',     icon: Smile,        color: 'text-pink-400'    },
   { to: '/habits',   label: 'Habits',   icon: CheckSquare,  color: 'text-amber-400'   },
   { to: '/time',     label: 'Time',     icon: Clock,        color: 'text-teal-400'    },
+  { to: '/dashboard/quarterly', label: 'Quarterly', icon: BarChart3, color: 'text-indigo-400' },
   { to: '/finance',  label: 'Finance',  icon: DollarSign,   color: 'text-emerald-400' },
   { to: '/health',   label: 'Health',   icon: Heart,        color: 'text-red-400'     },
   { to: '/projects', label: 'Projects', icon: FolderKanban, color: 'text-blue-400'    },
