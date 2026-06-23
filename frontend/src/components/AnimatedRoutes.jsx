@@ -27,6 +27,7 @@ import TimeAttention from '../modules/TimeAttention'
 import Decisions from '../modules/Decisions'
 import Fantasy from '../modules/Fantasy'
 import Insights from '../modules/Insights'
+import Quarterly from '../modules/Dashboard/Quarterly'
 
 export default function AnimatedRoutes() {
   const location = useLocation()
@@ -47,6 +48,7 @@ export default function AnimatedRoutes() {
         <Route path="/projects/*" element={<Projects />} />
         <Route path="/trading/*" element={<Trading />} />
         <Route path="/insights/*" element={<Insights />} />
+        <Route path="/dashboard/quarterly" element={<Quarterly />} />
         <Route path="/travel/*" element={<Travel />} />
         <Route path="/crm/*" element={<CRM />} />
         <Route path="/wiki/*" element={<Wiki />} />
