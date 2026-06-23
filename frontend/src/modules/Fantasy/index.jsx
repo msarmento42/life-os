@@ -1,18 +1,20 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import axios from 'axios'
-import { Trophy, RefreshCw, Users, ArrowLeftRight, Wrench, Package } from 'lucide-react'
+import { Trophy, RefreshCw, Users, ArrowLeftRight, Wrench, Package, BarChart3 } from 'lucide-react'
 import { useToast } from '../../components/Toast'
 import Roster from './Roster'
 import TradeProposals from './TradeProposals'
 import TradeBuilder from './TradeBuilder'
 import Picks from './Picks'
+import MarketIntel from './MarketIntel'
 
 const tabs = [
-  { to: '',        label: 'Roster',          icon: Users,          end: true },
-  { to: 'trades',  label: 'Trade Proposals', icon: ArrowLeftRight },
-  { to: 'builder', label: 'Trade Builder',   icon: Wrench },
-  { to: 'picks',   label: 'Picks',           icon: Package },
+  { to: '',             label: 'Roster',          icon: Users,          end: true },
+  { to: 'trades',       label: 'Trade Proposals', icon: ArrowLeftRight },
+  { to: 'builder',      label: 'Trade Builder',   icon: Wrench },
+  { to: 'picks',        label: 'Picks',           icon: Package },
+  { to: 'market-intel', label: 'Market Intel',    icon: BarChart3 },
 ]
 
 export default function Fantasy() {
@@ -93,7 +95,7 @@ export default function Fantasy() {
               className="btn-secondary flex items-center gap-2 text-sm"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
-              {syncing ? 'Syncing…' : 'Sync'}
+              {syncing ? 'Syncing...' : 'Sync'}
             </button>
           </div>
         </div>
@@ -161,6 +163,10 @@ export default function Fantasy() {
                   onSync={handleSync}
                 />
               }
+            />
+            <Route
+              path="market-intel"
+              element={<MarketIntel />}
             />
           </Routes>
         </div>
