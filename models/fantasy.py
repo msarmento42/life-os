@@ -34,7 +34,7 @@ class FantasyLeague(Base):
 
 
 class FantasyPlayer(Base):
-    """All NFL players we track — values + injury/depth chart state."""
+    """All NFL players we track - values + injury/depth chart state."""
     __tablename__ = "fantasy_players"
 
     id          = Column(Integer, primary_key=True, index=True)
@@ -84,7 +84,7 @@ class FantasyRoster(Base):
 
 
 class FantasyPick(Base):
-    """Tradeable future draft picks — who holds what."""
+    """Tradeable future draft picks - who holds what."""
     __tablename__ = "fantasy_picks"
 
     id                  = Column(Integer, primary_key=True, index=True)
@@ -116,7 +116,7 @@ class FantasyNewsItem(Base):
 
 
 class FantasyValueSnapshot(Base):
-    """Daily value snapshot — lets us track movers week-over-week."""
+    """Daily value snapshot - lets us track movers week-over-week."""
     __tablename__ = "fantasy_value_snapshots"
 
     id          = Column(Integer, primary_key=True, index=True)
@@ -126,3 +126,26 @@ class FantasyValueSnapshot(Base):
     value_1qb   = Column(Integer, default=0)
 
     __table_args__ = ()   # (UniqueConstraint handled via app logic)
+
+
+class FantasyHistoricalTrade(Base):
+    """Sleeper trade transaction with side-level FantasyCalc valuation."""
+    __tablename__ = "fantasy_historical_trades"
+
+    id                  = Column(Integer, primary_key=True, index=True)
+    sleeper_trade_id    = Column(String, unique=True, nullable=False, index=True)
+    league_sleeper_id   = Column(String, ForeignKey("fantasy_leagues.sleeper_id"), nullable=False, index=True)
+    week                = Column(Integer)
+    season              = Column(String)
+    status              = Column(String)
+    side_a_roster_id    = Column(Integer)
+    side_a_player_ids   = Column(Text)
+    side_a_pick_values  = Column(Text)
+    side_a_total_value  = Column(Float)
+    side_b_roster_id    = Column(Integer)
+    side_b_player_ids   = Column(Text)
+    side_b_pick_values  = Column(Text)
+    side_b_total_value  = Column(Float)
+    value_ratio         = Column(Float)
+    transaction_date    = Column(DateTime)
+    created_at          = Column(DateTime, default=func.now())
