@@ -36,26 +36,26 @@ jobs:
           PR_BODY=$(gh pr view "$PR" --repo "$REPO" --json body --jq '.body')
 
           # Gate 1: PR body must contain Closes #N
-          if ! echo "$PR_BODY" | grep -qiE "closes?\\s+#[0-9]+"; then
+          if ! echo "$PR_BODY" | grep -qiE "closes?\s+#[0-9]+"; then
             echo "SKIP: PR #$PR has no 'Closes #N' — auto-merge not enabled"
             exit 0
           fi
 
           # Extract issue number
-          ISSUE=$(echo "$PR_BODY" | grep -ioE "closes?\\s+#[0-9]+" | grep -oE "[0-9]+" | head -1)
+          ISSUE=$(echo "$PR_BODY" | grep -ioE "closes?\s+#[0-9]+" | grep -oE "[0-9]+" | head -1)
           echo "  Linked issue: #$ISSUE"
 
           # Get issue body
           ISSUE_BODY=$(gh issue view "$ISSUE" --repo "$REPO" --json body --jq '.body')
 
           # Gate 2: issue must have Auto-merge allowed: yes
-          if ! echo "$ISSUE_BODY" | grep -qiE "\\*\\*Auto-merge allowed:\\*\\*\\s*yes"; then
+          if ! echo "$ISSUE_BODY" | grep -qiE "\*\*Auto-merge allowed:\*\*\s*yes"; then
             echo "SKIP: Issue #$ISSUE does not have 'Auto-merge allowed: yes'"
             exit 0
           fi
 
           # Gate 3: issue must NOT have Risk level: HIGH
-          if echo "$ISSUE_BODY" | grep -qiE "\\*\\*Risk level:\\*\\*\\s*HIGH"; then
+          if echo "$ISSUE_BODY" | grep -qiE "\*\*Risk level:\*\*\s*HIGH"; then
             echo "SKIP: Issue #$ISSUE has Risk level: HIGH — manual review required"
             exit 0
           fi
