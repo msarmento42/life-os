@@ -4,6 +4,7 @@ Pulls league/roster/player/pick data and writes to SQLite.
 """
 from __future__ import annotations
 import json
+import urllib.error
 import urllib.request
 from datetime import datetime
 from typing import Optional
@@ -11,7 +12,11 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from models.fantasy import (
-    FantasyLeague, FantasyPlayer, FantasyRoster, FantasyPick
+    FantasyHistoricalTrade,
+    FantasyLeague,
+    FantasyPlayer,
+    FantasyRoster,
+    FantasyPick,
 )
 
 # ── Constants ──────────────────────────────────────────────────────────────────
@@ -50,6 +55,7 @@ LEAGUE_CONFIGS = {
 }
 
 FUTURE_SEASONS = ["2027", "2028"]
+PICK_VALUE_BY_ROUND = {1: 2500, 2: 1200, 3: 600, 4: 300}
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -58,6 +64,40 @@ def _fetch(url: str) -> dict | list:
     req = urllib.request.Request(url, headers={"User-Agent": "life-os-fantasy/1.0"})
     with urllib.request.urlopen(req, timeout=15) as resp:
         return json.loads(resp.read())
+
+
+def _same_roster_id(value, roster_id: int) -> bool:
+    if value is None:
+        return False
+    return str(value) == str(roster_id)
+
+
+def _trade_created_at(raw: dict) -> datetime | None:
+    created = raw.get("created") or raw.get("status_updated")
+    if not created:
+        return None
+    try:
+        created_int = int(created)
+    except (TypeError, ValueError):
+        return None
+    if created_int > 10_000_000_000:
+        created_int = created_int / 1000
+    return datetime.utcfromtimestamp(created_int)
+
+
+def _pick_value(pick: dict) -> int:
+    try:
+        round_number = int(pick.get("round", 0))
+    except (TypeError, ValueError):
+        return 0
+    return PICK_VALUE_BY_ROUND.get(round_number, 0)
+
+
+def _player_value_total(db: Session, player_ids: list[str]) -> float:
+    if not player_ids:
+        return 0.0
+    players = db.query(FantasyPlayer).filter(FantasyPlayer.sleeper_id.in_(player_ids)).all()
+    return float(sum(player.value_sf or 0 for player in players))
 
 
 # ── League sync ────────────────────────────────────────────────────────────────
@@ -274,6 +314,77 @@ def sync_picks(db: Session, league_sleeper_id: str) -> int:
         return 0
 
 
+# ── Historical trade sync ──────────────────────────────────────────────────────
+
+def sync_historical_trades(db: Session, league_id: str, season: str = "2025") -> dict:
+    """Ingest complete historical Sleeper trades for one league."""
+    ingested = 0
+    skipped_no_value = 0
+
+    for week in range(1, 19):
+        try:
+            transactions = _fetch(f"{SLEEPER_BASE}/league/{league_id}/transactions/{week}")
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                continue
+            print(f"[sleeper_sync] Trades for {league_id} week {week} error: {exc}")
+            continue
+        except Exception as exc:
+            print(f"[sleeper_sync] Trades for {league_id} week {week} error: {exc}")
+            continue
+
+        for tx in transactions or []:
+            if tx.get("type") != "trade" or tx.get("status") != "complete":
+                continue
+
+            sleeper_trade_id = str(tx.get("transaction_id") or tx.get("id") or f"{league_id}-{week}-{ingested}")
+            exists = db.query(FantasyHistoricalTrade).filter_by(sleeper_trade_id=sleeper_trade_id).first()
+            if exists:
+                continue
+
+            roster_ids = tx.get("roster_ids") or []
+            if len(roster_ids) < 2:
+                continue
+
+            side_a_roster_id = int(roster_ids[0])
+            side_b_roster_id = int(roster_ids[1])
+            drops = tx.get("drops") or {}
+            draft_picks = tx.get("draft_picks") or []
+
+            side_a_player_ids = [str(pid) for pid, rid in drops.items() if _same_roster_id(rid, side_a_roster_id)]
+            side_b_player_ids = [str(pid) for pid, rid in drops.items() if _same_roster_id(rid, side_b_roster_id)]
+            side_a_picks = [p for p in draft_picks if _same_roster_id(p.get("previous_owner_id"), side_a_roster_id)]
+            side_b_picks = [p for p in draft_picks if _same_roster_id(p.get("previous_owner_id"), side_b_roster_id)]
+
+            side_a_total = _player_value_total(db, side_a_player_ids) + sum(_pick_value(p) for p in side_a_picks)
+            side_b_total = _player_value_total(db, side_b_player_ids) + sum(_pick_value(p) for p in side_b_picks)
+            if side_a_total <= 0 and side_b_total <= 0:
+                skipped_no_value += 1
+
+            trade = FantasyHistoricalTrade(
+                sleeper_trade_id=sleeper_trade_id,
+                league_sleeper_id=league_id,
+                week=week,
+                season=str(season),
+                status=tx.get("status"),
+                side_a_roster_id=side_a_roster_id,
+                side_a_player_ids=json.dumps(side_a_player_ids),
+                side_a_pick_values=json.dumps(side_a_picks),
+                side_a_total_value=side_a_total,
+                side_b_roster_id=side_b_roster_id,
+                side_b_player_ids=json.dumps(side_b_player_ids),
+                side_b_pick_values=json.dumps(side_b_picks),
+                side_b_total_value=side_b_total,
+                value_ratio=(side_b_total / side_a_total) if side_a_total > 0 else None,
+                transaction_date=_trade_created_at(tx),
+            )
+            db.add(trade)
+            ingested += 1
+
+    db.commit()
+    return {"ingested": ingested, "skipped_no_value": skipped_no_value}
+
+
 # ── Full sync ──────────────────────────────────────────────────────────────────
 
 def full_sync(db: Session) -> dict:
@@ -307,7 +418,7 @@ def full_sync(db: Session) -> dict:
 
 
 def get_trending(limit: int = 10) -> list[dict]:
-    """Fetch Sleeper trending adds (no DB write — just a live call)."""
+    """Fetch Sleeper trending adds (no DB write - just a live call)."""
     try:
         data = _fetch(f"{SLEEPER_BASE}/players/nfl/trending/add?lookback_hours=24&limit={limit}")
         return data
