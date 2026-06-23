@@ -3,6 +3,7 @@ import axios from 'axios'
 import { Brain, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react'
 import EmptyState from '../../components/EmptyState'
 import { useToast } from '../../components/Toast'
+import DataQuality from './DataQuality'
 
 const strength = (value) => {
   const abs = Math.abs(Number(value || 0))
@@ -67,6 +68,7 @@ function CorrelationCard({ correlation }) {
 }
 
 export default function Insights() {
+  const [activeTab, setActiveTab] = useState('correlations')
   const [correlations, setCorrelations] = useState([])
   const [loading, setLoading] = useState(true)
   const [computing, setComputing] = useState(false)
@@ -105,16 +107,43 @@ export default function Insights() {
             <div className="w-1 h-7 rounded-full bg-fuchsia-500" />
             <h1 className="page-title">Insights</h1>
           </div>
-          <button className="btn-primary text-xs" onClick={recompute} disabled={computing}>
-            <RefreshCw className={`w-3.5 h-3.5 ${computing ? 'animate-spin' : ''}`} />
-            {computing ? 'Recomputing' : 'Recompute'}
-          </button>
+          {activeTab === 'correlations' && (
+            <button className="btn-primary text-xs" onClick={recompute} disabled={computing}>
+              <RefreshCw className={`w-3.5 h-3.5 ${computing ? 'animate-spin' : ''}`} />
+              {computing ? 'Recomputing' : 'Recompute'}
+            </button>
+          )}
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
         <div className="page space-y-5">
-          {loading ? (
+          <div className="flex flex-wrap gap-2 border-b border-gray-800 pb-3">
+            <button
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'correlations'
+                  ? 'bg-fuchsia-500/20 text-fuchsia-200'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
+              }`}
+              onClick={() => setActiveTab('correlations')}
+            >
+              Correlations
+            </button>
+            <button
+              className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                activeTab === 'data-quality'
+                  ? 'bg-fuchsia-500/20 text-fuchsia-200'
+                  : 'text-gray-400 hover:bg-gray-800 hover:text-gray-100'
+              }`}
+              onClick={() => setActiveTab('data-quality')}
+            >
+              Data Quality
+            </button>
+          </div>
+
+          {activeTab === 'data-quality' ? (
+            <DataQuality />
+          ) : loading ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {Array.from({ length: 4 }).map((_, i) => <div key={i} className="card h-44 animate-pulse" />)}
             </div>
