@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy, Brain } from 'lucide-react'
+import { DollarSign, Plane, Users, BookOpen, Sun, Moon, Activity, Heart, CheckSquare, Library, FolderKanban, Smile, TrendingUp, Clock, Scale, ChevronDown, ListTodo, Trophy, Brain, BarChart3 } from 'lucide-react'
 
 const navSections = [
   {
@@ -10,6 +10,7 @@ const navSections = [
       { to: '/mood',     label: 'Mood & Energy',    icon: Smile,         color: 'text-pink-400' },
       { to: '/habits',   label: 'Habits & Routines', icon: CheckSquare,   color: 'text-amber-400' },
       { to: '/time',     label: 'Time & Attention', icon: Clock,         color: 'text-teal-400' },
+      { to: '/dashboard/quarterly', label: 'Quarterly Review', icon: BarChart3, color: 'text-indigo-400' },
     ]
   },
   {
