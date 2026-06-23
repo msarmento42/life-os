@@ -7,6 +7,7 @@ from pathlib import Path
 from database import init_db
 from routers import (
     crm,
+    dashboard,
     decisions,
     fantasy,
     finance,
@@ -52,6 +53,7 @@ app.include_router(time_tracking.router)
 app.include_router(decisions.router)
 app.include_router(fantasy.router)
 app.include_router(insights.router)
+app.include_router(dashboard.router)
 
 
 @app.on_event("startup")
