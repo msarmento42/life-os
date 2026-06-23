@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import date, timedelta
 from math import sqrt
 
 from fastapi import APIRouter, Depends
@@ -6,10 +6,14 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db
+from models.crm import Interaction
+from models.decisions import Decision
+from models.finance import Transaction
 from models.habits import Habit, HabitLog
-from models.health import SleepLog, Workout
+from models.health import NutritionLog, SleepLog, Workout
 from models.insights import Correlation
 from models.mood import MoodLog
+from models.time_tracking import TimeBlock
 from models.trading import Trade
 
 router = APIRouter(prefix="/api/insights", tags=["insights"])
@@ -56,6 +60,21 @@ def _serialize(correlation):
         "sample_size": correlation.sample_size,
         "label": correlation.label,
         "computed_at": str(correlation.computed_at) if correlation.computed_at else None,
+    }
+
+
+def _module_quality(db, module, model, date_field, cutoff, *filters):
+    query = db.query(func.count(func.distinct(date_field))).filter(date_field >= cutoff)
+    for filter_clause in filters:
+        query = query.filter(filter_clause)
+
+    days_logged = min(int(query.scalar() or 0), 30)
+    completeness = round(max(0, min(days_logged / 30, 1)) * 100, 1)
+    return {
+        "module": module,
+        "days_logged": days_logged,
+        "completeness": completeness,
+        "warning": completeness < 70,
     }
 
 
@@ -142,3 +161,20 @@ def get_correlations(db: Session = Depends(get_db)):
         func.abs(Correlation.coefficient).desc()
     ).all()
     return [_serialize(correlation) for correlation in correlations]
+
+
+@router.get("/data-quality")
+def get_data_quality(db: Session = Depends(get_db)):
+    cutoff = date.today() - timedelta(days=30)
+    modules = [
+        _module_quality(db, "Mood", MoodLog, MoodLog.date, cutoff),
+        _module_quality(db, "Sleep", SleepLog, SleepLog.date, cutoff),
+        _module_quality(db, "Workouts", Workout, Workout.date, cutoff),
+        _module_quality(db, "Nutrition", NutritionLog, NutritionLog.date, cutoff),
+        _module_quality(db, "Habits", HabitLog, HabitLog.date, cutoff, HabitLog.completed.is_(True)),
+        _module_quality(db, "Time Blocks", TimeBlock, TimeBlock.date, cutoff),
+        _module_quality(db, "Finance", Transaction, Transaction.date, cutoff),
+        _module_quality(db, "CRM", Interaction, Interaction.date, cutoff),
+        _module_quality(db, "Decisions", Decision, Decision.date, cutoff),
+    ]
+    return sorted(modules, key=lambda item: item["completeness"])
