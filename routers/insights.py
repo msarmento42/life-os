@@ -193,38 +193,38 @@ def compute_correlations(db: Session = Depends(get_db)):
             db,
             "stress_score",
             "habit_completion_rate",
-            "Stress  next-day habit completion",
+            "Stress → next-day habit completion",
             stress_habit_pairs,
         ),
         _upsert_correlation(
             db,
             "sleep_quality",
             "focus_score",
-            "Sleep  next-day focus",
+            "Sleep → next-day focus",
             sleep_focus_pairs,
         ),
         _upsert_correlation(
             db,
             "deep_work_hours",
             "energy_score",
-            "Deep work  same-day energy",
+            "Deep work → same-day energy",
             deep_work_pairs,
         ),
         _upsert_correlation(
-            db, "hrv", "mood_score", "HRV  same-day mood", hrv_pairs
+            db, "hrv", "mood_score", "HRV → same-day mood", hrv_pairs
         ),
         _upsert_correlation(
             db,
             "anxiety_score",
             "sleep_quality",
-            "Anxiety  next-night sleep quality",
+            "Anxiety → next-night sleep quality",
             anxiety_sleep_pairs,
         ),
         _upsert_correlation(
             db,
             "habit_completion_rate",
             "mood_next_day",
-            "Habit completion  next-day mood",
+            "Habit completion → next-day mood",
             habit_next_day_mood_pairs,
         ),
     ]
