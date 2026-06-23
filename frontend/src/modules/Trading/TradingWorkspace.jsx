@@ -40,7 +40,7 @@ export default function Trading() {
   const [deleteTarget, setDeleteTarget] = useState(null)
   const toast = useToast()
 
-  const [tradeForm, setTradeForm] = useState({ symbol: '', side: 'buy', quantity: '', price: '', date: new Date().toISOString().split('T')[0], fees: '0', pnl: '0', strategy_id: '', notes: '' })
+  const [tradeForm, setTradeForm] = useState({ symbol: '', side: 'buy', quantity: '', price: '', date: new Date().toISOString().split('T')[0], fees: '0', pnl: '0', strategy_id: '', notes: '', followed_system: null })
   const [posForm, setPosForm] = useState({ symbol: '', quantity: '', avg_cost: '', current_price: '', asset_class: 'equity', strategy_id: '' })
 
   const load = async () => {
@@ -534,6 +534,26 @@ export default function Trading() {
                   <option value="">No strategy</option>
                   {strategies.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
+              </div>
+              <div className="col-span-2"><label className="label">Notes</label><textarea className="input min-h-[80px]" value={tradeForm.notes} onChange={e => setTradeForm(f => ({ ...f, notes: e.target.value }))} /></div>
+              <div className="col-span-2">
+                <label className="label">Followed System?</label>
+                <div className="flex gap-2">
+                  {[
+                    ['Yes', true],
+                    ['No', false],
+                    ['—', null],
+                  ].map(([label, value]) => (
+                    <button
+                      key={label}
+                      type="button"
+                      className={`btn-secondary flex-1 justify-center ${tradeForm.followed_system === value ? 'border-cyan-400 text-cyan-300' : 'border-gray-700'}`}
+                      onClick={() => setTradeForm(f => ({ ...f, followed_system: value }))}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="flex gap-3 justify-end pt-2">
