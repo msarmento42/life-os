@@ -28,6 +28,8 @@ class Trade(Base):
     fees = Column(Float, default=0.0)
     pnl = Column(Float, default=0.0)   # realized P&L on close
     notes = Column(Text)
+    followed_system = Column(Boolean, nullable=True)  # True=followed, False=overrode, None=not recorded
+    decision_id = Column(Integer, ForeignKey("decisions.id"), nullable=True)
     created_at = Column(DateTime, default=func.now())
     strategy = relationship("Strategy", back_populates="trades")
 
