@@ -204,7 +204,7 @@ Scheduled Cowork sessions run automatically and:
 > Ship-quality reliability and fit-and-finish.
 
 - [ ] **S10.01** — Backup system: one-click JSON export of entire database, timestamped file, import/restore endpoint. Frontend: Settings page with backup/restore buttons + last backup date. [issued #20]
-- [ ] **S10.02** — Database migrations: set up Alembic for schema versioning. Create initial migration from current state.
+- [ ] **S10.02** — Database migrations: set up Alembic for schema versioning. Create initial migration from current state. [issued #39]
 - [ ] **S10.03** — Performance: add SQLite indexes on all date columns + foreign keys. Enable WAL mode. Measure and optimize slow queries. [issued #21]
 - [ ] **S10.04** — Code splitting: lazy-load each module in React (React.lazy + Suspense). Verify bundle sizes. [issued #22]
 - [ ] **S10.05** — Keyboard shortcuts: document all shortcuts, add help overlay (Cmd+?), ensure all major actions have keyboard shortcuts.
