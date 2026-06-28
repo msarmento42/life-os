@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import TradingWorkspace from './TradingWorkspace'
 import StrategyComparison from './StrategyComparison'
+import DisciplineTracker from './DisciplineTracker'
 
 export default function Trading() {
   const [view, setView] = useState('workspace')
@@ -12,6 +13,7 @@ export default function Trading() {
           {[
             ['workspace', 'Trading Workspace'],
             ['strategy-comparison', 'Strategy Comparison'],
+            ['discipline', 'Discipline'],
           ].map(([id, label]) => (
             <button
               key={id}
@@ -29,6 +31,11 @@ export default function Trading() {
         {view === 'strategy-comparison' && (
           <div className="h-full overflow-y-auto p-6">
             <StrategyComparison />
+          </div>
+        )}
+        {view === 'discipline' && (
+          <div className="h-full overflow-y-auto p-6">
+            <DisciplineTracker />
           </div>
         )}
       </div>

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, text
 from typing import Optional
 from datetime import date, timedelta
 from pydantic import BaseModel
@@ -32,6 +32,8 @@ class TradeCreate(BaseModel):
     fees: float = 0.0
     pnl: float = 0.0
     notes: Optional[str] = None
+    followed_system: Optional[bool] = None
+    decision_id: Optional[int] = None
 
 class PositionCreate(BaseModel):
     symbol: str
@@ -161,12 +163,16 @@ def get_trades(strategy_id: Optional[int] = None, symbol: Optional[str] = None,
         "price": t.price, "date": str(t.date), "fees": t.fees, "pnl": t.pnl,
         "notes": t.notes, "strategy_name": t.strategy.name if t.strategy else None,
         "strategy_color": t.strategy.color if t.strategy else None,
+        "followed_system": t.followed_system,
+        "decision_id": t.decision_id,
         "total_cost": round(t.quantity * t.price + t.fees, 2),
     } for t in trades]
 
 @router.post("/trades")
 def create_trade(data: TradeCreate, db: Session = Depends(get_db)):
     t = Trade(**data.dict())
+    t.followed_system = data.followed_system
+    t.decision_id = data.decision_id
     db.add(t)
     db.commit()
     db.refresh(t)
@@ -296,13 +302,58 @@ def trading_dashboard(db: Session = Depends(get_db)):
         "strategy_pnl": strategy_pnl,
     }
 
+
+@router.get("/discipline")
+def get_trading_discipline(db: Session = Depends(get_db)):
+    strategies = db.query(Strategy).filter(Strategy.is_active == True).all()
+    rows = []
+    overall_total = 0
+    overall_followed = 0
+    overall_overridden = 0
+
+    for strategy in strategies:
+        logged_trades = [
+            trade for trade in strategy.trades
+            if getattr(trade, "followed_system", None) is not None
+        ]
+        followed_count = sum(1 for trade in logged_trades if trade.followed_system in (True, 1))
+        overridden_count = sum(1 for trade in logged_trades if trade.followed_system in (False, 0))
+        total_trades = len(logged_trades)
+        score = round(followed_count / total_trades * 100, 1) if total_trades else None
+
+        overall_total += total_trades
+        overall_followed += followed_count
+        overall_overridden += overridden_count
+
+        rows.append({
+            "strategy_id": strategy.id,
+            "strategy_name": strategy.name,
+            "strategy_color": strategy.color,
+            "total_trades_logged": total_trades,
+            "followed_count": followed_count,
+            "overridden_count": overridden_count,
+            "discipline_score": score,
+        })
+
+    overall_score = round(overall_followed / overall_total * 100, 1) if overall_total else None
+
+    return {
+        "overall": {
+            "total_trades_logged": overall_total,
+            "followed_count": overall_followed,
+            "overridden_count": overall_overridden,
+            "discipline_score": overall_score,
+        },
+        "strategies": rows,
+    }
+
 # ─────────────────────────────────────────────
 # T2.01 — Backtest-to-Live Gap Analysis
 # ─────────────────────────────────────────────
 
 def _run_trading_migrations():
-    """Add is_paper column to trades table if not present."""
-    from sqlalchemy import text, inspect
+    """Add additive trading columns to trades table if not present."""
+    from sqlalchemy import inspect
     from database import engine
     insp = inspect(engine)
     cols = [c["name"] for c in insp.get_columns("trades")]
@@ -310,6 +361,20 @@ def _run_trading_migrations():
         with engine.connect() as conn:
             try:
                 conn.execute(text("ALTER TABLE trades ADD COLUMN is_paper BOOLEAN DEFAULT 1"))
+                conn.commit()
+            except Exception:
+                pass
+    if "followed_system" not in cols:
+        with engine.connect() as conn:
+            try:
+                conn.execute(text("ALTER TABLE trades ADD COLUMN followed_system INTEGER DEFAULT NULL"))
+                conn.commit()
+            except Exception:
+                pass
+    if "decision_id" not in cols:
+        with engine.connect() as conn:
+            try:
+                conn.execute(text("ALTER TABLE trades ADD COLUMN decision_id INTEGER DEFAULT NULL"))
                 conn.commit()
             except Exception:
                 pass
@@ -330,7 +395,6 @@ def get_gap_analysis(db: Session = Depends(get_db)):
       - is_paper=False → live trades
     Strategies with only one type are still shown with the available data.
     """
-    from sqlalchemy import text
 
     strategies = db.query(Strategy).filter(Strategy.is_active == True).all()
 
