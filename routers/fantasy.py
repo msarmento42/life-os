@@ -311,6 +311,22 @@ def sync_values_only(db: Session = Depends(get_db)):
     return {"status": "ok", "players_updated": count}
 
 
+@router.post("/sync-trades")
+def sync_trades(db: Session = Depends(get_db)):
+    """Sync complete historical trades from Sleeper for every configured league."""
+    from database import Base, engine
+    from models.fantasy import FantasyHistoricalTrade
+    from services.sleeper_sync import sync_historical_trades
+
+    Base.metadata.create_all(bind=engine)
+    results = []
+    for league_id in LEAGUE_CONFIGS:
+        result = sync_historical_trades(db, league_id)
+        results.append({"league_id": league_id, **result})
+    total = sum(result["ingested"] for result in results)
+    return {"total_ingested": total, "leagues": results}
+
+
 # ── Dashboard summary ─────────────────────────────────────────────────────────
 
 @router.get("/dashboard")
@@ -358,3 +374,74 @@ def get_dashboard(db: Session = Depends(get_db)):
         "value_movers": movers,
         "last_updated": leagues[0].last_synced.isoformat() if leagues[0].last_synced else None,
     }
+
+
+def _json_list(value: str | None) -> list:
+    if not value:
+        return []
+    try:
+        data = json.loads(value)
+    except (TypeError, ValueError):
+        return []
+    return data if isinstance(data, list) else []
+
+
+def _positions_for_players(db: Session, player_ids: list[str]) -> set[str]:
+    if not player_ids:
+        return set()
+    players = db.query(FantasyPlayer).filter(FantasyPlayer.sleeper_id.in_(player_ids)).all()
+    return {player.position for player in players if player.position in {"QB", "RB", "WR", "TE"}}
+
+
+@router.get("/market-intel")
+def get_market_intel(db: Session = Depends(get_db)):
+    """Summarize historical trade market premiums by league and position."""
+    from models.fantasy import FantasyHistoricalTrade
+
+    leagues = db.query(FantasyLeague).all()
+    result = []
+    for league in leagues:
+        trades = db.query(FantasyHistoricalTrade).filter_by(
+            league_sleeper_id=league.sleeper_id,
+            status="complete",
+        ).all()
+        samples = {pos: [] for pos in ["QB", "RB", "WR", "TE"]}
+        imbalances = []
+
+        for trade in trades:
+            ratio = trade.value_ratio
+            if ratio is None or ratio <= 0:
+                continue
+            side_a_positions = _positions_for_players(db, _json_list(trade.side_a_player_ids))
+            side_b_positions = _positions_for_players(db, _json_list(trade.side_b_player_ids))
+            for position in side_a_positions:
+                samples[position].append(ratio)
+            if trade.side_b_total_value and trade.side_b_total_value > 0:
+                inverse_ratio = (trade.side_a_total_value or 0) / trade.side_b_total_value
+                for position in side_b_positions:
+                    samples[position].append(inverse_ratio)
+            imbalances.append(abs(1 - ratio))
+
+        premiums = {
+            pos: round(sum(values) / len(values), 3) if values else 1.0
+            for pos, values in samples.items()
+        }
+        notable = [
+            {"position": pos, "premium": premium, "sample_size": len(samples[pos])}
+            for pos, premium in premiums.items()
+            if abs(premium - 1.0) > 0.05
+        ]
+        avg_imbalance = sum(imbalances) / len(imbalances) if imbalances else 0
+        fairness_score = max(0, min(1, 1 - avg_imbalance))
+
+        result.append({
+            "league_id": league.sleeper_id,
+            "league_name": league.name,
+            "total_trades": len(trades),
+            "position_premiums": premiums,
+            "position_samples": {pos: len(values) for pos, values in samples.items()},
+            "notable_divergences": notable,
+            "fairness_score": round(fairness_score, 3),
+        })
+
+    return {"leagues": result}
