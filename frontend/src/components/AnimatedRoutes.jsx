@@ -11,23 +11,25 @@
  * driven entirely by CSS so it respects prefers-reduced-motion automatically.
  */
 
+import { lazy, Suspense } from 'react'
 import { useLocation, Routes, Route, Navigate } from 'react-router-dom'
-import Finance from '../modules/Finance'
-import Tasks from '../modules/Tasks'
-import Travel from '../modules/Travel'
-import CRM from '../modules/CRM'
-import Wiki from '../modules/Wiki'
-import Health from '../modules/Health'
-import Habits from '../modules/Habits'
-import Reading from '../modules/Reading'
-import Projects from '../modules/Projects'
-import Mood from '../modules/Mood'
-import Trading from '../modules/Trading'
-import TimeAttention from '../modules/TimeAttention'
-import Decisions from '../modules/Decisions'
-import Fantasy from '../modules/Fantasy'
-import Insights from '../modules/Insights'
-import Weekly from '../modules/Dashboard/Weekly'
+
+const Finance = lazy(() => import('../modules/Finance'))
+const Tasks = lazy(() => import('../modules/Tasks'))
+const Travel = lazy(() => import('../modules/Travel'))
+const CRM = lazy(() => import('../modules/CRM'))
+const Wiki = lazy(() => import('../modules/Wiki'))
+const Health = lazy(() => import('../modules/Health'))
+const Habits = lazy(() => import('../modules/Habits'))
+const Reading = lazy(() => import('../modules/Reading'))
+const Projects = lazy(() => import('../modules/Projects'))
+const Mood = lazy(() => import('../modules/Mood'))
+const Trading = lazy(() => import('../modules/Trading'))
+const TimeAttention = lazy(() => import('../modules/TimeAttention'))
+const Decisions = lazy(() => import('../modules/Decisions'))
+const Fantasy = lazy(() => import('../modules/Fantasy'))
+const Insights = lazy(() => import('../modules/Insights'))
+const Weekly = lazy(() => import('../modules/Dashboard/Weekly'))
 
 export default function AnimatedRoutes() {
   const location = useLocation()
@@ -37,25 +39,29 @@ export default function AnimatedRoutes() {
 
   return (
     <div key={pageKey} className="page-transition h-full">
-      <Routes location={location}>
-        <Route path="/" element={<Navigate to="/tasks" replace />} />
-        <Route path="/tasks/*" element={<Tasks />} />
-        <Route path="/dashboard/weekly" element={<Weekly />} />
-        <Route path="/finance/*" element={<Finance />} />
-        <Route path="/health/*" element={<Health />} />
-        <Route path="/habits/*" element={<Habits />} />
-        <Route path="/mood/*" element={<Mood />} />
-        <Route path="/reading/*" element={<Reading />} />
-        <Route path="/projects/*" element={<Projects />} />
-        <Route path="/trading/*" element={<Trading />} />
-        <Route path="/insights/*" element={<Insights />} />
-        <Route path="/travel/*" element={<Travel />} />
-        <Route path="/crm/*" element={<CRM />} />
-        <Route path="/wiki/*" element={<Wiki />} />
-        <Route path="/time/*" element={<TimeAttention />} />
-        <Route path="/decisions/*" element={<Decisions />} />
-        <Route path="/fantasy/*" element={<Fantasy />} />
-      </Routes>
+      <Suspense fallback={
+        <div className="flex items-center justify-center h-64 text-gray-400 text-sm">Loading...</div>
+      }>
+        <Routes location={location}>
+          <Route path="/" element={<Navigate to="/tasks" replace />} />
+          <Route path="/tasks/*" element={<Tasks />} />
+          <Route path="/dashboard/weekly" element={<Weekly />} />
+          <Route path="/finance/*" element={<Finance />} />
+          <Route path="/health/*" element={<Health />} />
+          <Route path="/habits/*" element={<Habits />} />
+          <Route path="/mood/*" element={<Mood />} />
+          <Route path="/reading/*" element={<Reading />} />
+          <Route path="/projects/*" element={<Projects />} />
+          <Route path="/trading/*" element={<Trading />} />
+          <Route path="/insights/*" element={<Insights />} />
+          <Route path="/travel/*" element={<Travel />} />
+          <Route path="/crm/*" element={<CRM />} />
+          <Route path="/wiki/*" element={<Wiki />} />
+          <Route path="/time/*" element={<TimeAttention />} />
+          <Route path="/decisions/*" element={<Decisions />} />
+          <Route path="/fantasy/*" element={<Fantasy />} />
+        </Routes>
+      </Suspense>
     </div>
   )
 }
