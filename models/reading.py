@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, Boolean, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
@@ -6,6 +6,11 @@ from database import Base
 
 class Book(Base):
     __tablename__ = "books"
+    __table_args__ = (
+        Index("ix_books_status", "status"),
+        Index("ix_books_started_date", "started_date"),
+    )
+
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, nullable=False)
     author = Column(String)

@@ -84,6 +84,11 @@ def _run_migrations():
         # S6.03: quality_score on interactions
         ("interactions", "quality_score",
          "ALTER TABLE interactions ADD COLUMN quality_score INTEGER DEFAULT 7"),
+        # S10.03: CRM health and filtering fields
+        ("contacts", "last_contact",
+         "ALTER TABLE contacts ADD COLUMN last_contact DATE"),
+        ("contacts", "status",
+         "ALTER TABLE contacts ADD COLUMN status TEXT DEFAULT 'active'"),
         # S5.01: depth fields on habits
         ("habits", "goal_id",
          "ALTER TABLE habits ADD COLUMN goal_id INTEGER REFERENCES objectives(id)"),
@@ -114,3 +119,21 @@ def _run_migrations():
                     conn.commit()
             except Exception:
                 pass  # Already exists or other non-fatal error
+
+        index_migrations = [
+            "CREATE INDEX IF NOT EXISTS ix_tasks_due_date ON tasks (due_date)",
+            "CREATE INDEX IF NOT EXISTS ix_tasks_status ON tasks (status)",
+            "CREATE INDEX IF NOT EXISTS ix_tasks_area ON tasks (area)",
+            "CREATE INDEX IF NOT EXISTS ix_contacts_last_contact ON contacts (last_contact)",
+            "CREATE INDEX IF NOT EXISTS ix_contacts_status ON contacts (status)",
+            "CREATE INDEX IF NOT EXISTS ix_trips_start_date ON trips (start_date)",
+            "CREATE INDEX IF NOT EXISTS ix_trips_destination ON trips (destination)",
+            "CREATE INDEX IF NOT EXISTS ix_books_status ON books (status)",
+            "CREATE INDEX IF NOT EXISTS ix_books_started_date ON books (started_date)",
+        ]
+        for sql in index_migrations:
+            try:
+                conn.execute(text(sql))
+                conn.commit()
+            except Exception:
+                pass

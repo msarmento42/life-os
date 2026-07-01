@@ -8,6 +8,7 @@ from database import init_db
 from routers import (
     crm,
     dashboard,
+    db_health,
     decisions,
     fantasy,
     finance,
@@ -54,6 +55,7 @@ app.include_router(decisions.router)
 app.include_router(fantasy.router)
 app.include_router(insights.router)
 app.include_router(dashboard.router)
+app.include_router(db_health.router)
 
 
 @app.on_event("startup")

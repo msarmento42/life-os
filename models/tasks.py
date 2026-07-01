@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Date, DateTime, Text, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Date, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
@@ -12,6 +12,11 @@ class Task(Base):
     area:     work | personal | health | finance | other
     """
     __tablename__ = "tasks"
+    __table_args__ = (
+        Index("ix_tasks_due_date", "due_date"),
+        Index("ix_tasks_status", "status"),
+        Index("ix_tasks_area", "area"),
+    )
 
     id           = Column(Integer, primary_key=True, index=True)
     title        = Column(String, nullable=False)

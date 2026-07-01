@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, Boolean, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Date, Boolean, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
@@ -6,6 +6,11 @@ from database import Base
 
 class Trip(Base):
     __tablename__ = "trips"
+    __table_args__ = (
+        Index("ix_trips_start_date", "start_date"),
+        Index("ix_trips_destination", "destination"),
+    )
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     destination = Column(String, nullable=False)

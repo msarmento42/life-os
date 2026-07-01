@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Date, Boolean, DateTime, Text, ForeignKey
+from sqlalchemy import Column, Integer, String, Date, Boolean, DateTime, Text, ForeignKey, Index
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from database import Base
@@ -6,6 +6,11 @@ from database import Base
 
 class Contact(Base):
     __tablename__ = "contacts"
+    __table_args__ = (
+        Index("ix_contacts_last_contact", "last_contact"),
+        Index("ix_contacts_status", "status"),
+    )
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=False)
     photo_url = Column(String)
@@ -22,6 +27,8 @@ class Contact(Base):
     notes = Column(Text)
     # Cadence in days: how often should you reach out?
     cadence_days = Column(Integer, default=30)
+    last_contact = Column(Date)
+    status = Column(String, default="active")
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     interactions = relationship("Interaction", back_populates="contact", cascade="all, delete-orphan")
