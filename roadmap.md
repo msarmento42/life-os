@@ -20,3 +20,21 @@
 1. **SaaS replacement** — each sprint eliminates a paid subscription or fills a gap left by one
 2. **Personal data ownership** — all data local, never sent to a third party
 3. **Build cadence** — automated twice-daily builds keep momentum without needing willpower
+
+---
+
+## Parallel work: git worktrees
+
+When running more than one Claude Code / Cowork session against this repo at
+the same time, use a worktree per session instead of separate full clones or
+switching branches back and forth in one directory — avoids uncommitted
+changes in one session getting clobbered by a checkout in another. (This repo
+has accumulated several ad-hoc `-issue-NN` clone directories over time from
+doing this manually — worktrees replace that pattern.)
+
+```
+scripts/new-worktree.sh <branch-name>
+```
+
+Creates `../<repo-name>-<branch-name>/` on a new branch, ready to open as its
+own session. `git worktree remove ../<repo-name>-<branch-name>` when done.
