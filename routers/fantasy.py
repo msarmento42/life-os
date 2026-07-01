@@ -376,7 +376,7 @@ def get_dashboard(db: Session = Depends(get_db)):
     }
 
 
-def _json_list(value: str | None) -> list:
+def _json_list(value: Optional[str]) -> list:
     if not value:
         return []
     try:
