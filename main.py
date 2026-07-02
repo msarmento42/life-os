@@ -10,6 +10,7 @@ from routers import (
     dashboard,
     db_health,
     decisions,
+    export,
     fantasy,
     finance,
     habits,
@@ -56,6 +57,7 @@ app.include_router(fantasy.router)
 app.include_router(insights.router)
 app.include_router(dashboard.router)
 app.include_router(db_health.router)
+app.include_router(export.router)
 
 
 @app.on_event("startup")
