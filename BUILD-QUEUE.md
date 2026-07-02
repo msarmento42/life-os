@@ -2,26 +2,26 @@
 *The ordered backlog for scheduled build sessions. Each session picks the next `[ ]` item, builds it, and marks it `[x]`.*
 
 **Source of truth:** `PRODUCT-SPEC.md`
-**Last updated:** 2026-07-02 (Marcus OS migration pivot)
+**Last updated:** 2026-07-02 (Marcus OS migration pivot follow-up)
 
 ---
 
 ## ⭐ NEXT-UP (2026-07 pivot — maintenance mode)
 
 1. ~~S9.02 Trading wire-up~~ ✅ *(verified already merged via PR #33, 2026-06-28 — checkbox was stale, corrected 2026-07-02)*
-2. TRV2.01 Travel packing frontend (~1 hr, backend done)
-3. VLT.01 `/api/export/vault` — Markdown export of reviews-relevant data (see issue)
+2. ~~TRV2.01 Travel packing frontend (~1 hr, backend done)~~ ✅ *(completed via PR #68, 2026-07-02)*
+3. ~~VLT.01 `/api/export/vault` — Markdown export of reviews-relevant data~~ ✅ *(completed via PR #70, 2026-07-02)*
 
-**Then the queue closes.** All other unchecked items move to `## Parked (post-pivot)` — do not build them. Build sessions drop to Mon+Thu, then Sat-only.
+**The queue is now closed.** All other unchecked items live in `## Parked (post-pivot)` — do not build them absent an explicit `agios:lifeos-maintenance` label or a future un-freeze decision. Build sessions drop to Mon+Thu, then Sat-only.
 
 ---
 
 ## How This Works
 
-Scheduled Cowork sessions run automatically and:
+Scheduled Cowork sessions run automatically for maintenance-mode work only and:
 1. Read this file to find the next unchecked item
-2. Read `PRODUCT-SPEC.md` for full spec context
-3. Build the feature (backend model + router + frontend + seed data)
+2. Read `PRODUCT-SPEC.md` for the freeze banner and historical module context
+3. Build only the scoped maintenance item; do not start parked feature work
 4. Test it (import check, API smoke test)
 5. Mark the item `[x]` with date completed
 6. Update any related items if scope changed
@@ -185,7 +185,7 @@ Scheduled Cowork sessions run automatically and:
 
 > New scope, added 2026-07 pivot. Local-only export -- no network calls, no vault-repo access.
 
-- [ ] **VLT.01** — `/api/export/vault` — new endpoint + CLI (`python -m services.vault_export`) writing Markdown (weekly time/energy rollup, health metric trends, active goals snapshot) to `exports/vault/` with vault frontmatter (`source: exporter`, `status: draft`). *(NEXT-UP — Marcus OS migration Task 6)*
+- [x] **VLT.01** — `/api/export/vault` — new endpoint + CLI (`python -m services.vault_export`) writing Markdown (weekly time/energy rollup, health metric trends, active goals snapshot) to `exports/vault/` with vault frontmatter (`source: exporter`, `status: draft`). *(completed via PR #70, 2026-07-02)*
 
 ## Sprint 12: Backup, Performance, Final Polish
 
@@ -245,11 +245,11 @@ Scheduled Cowork sessions run automatically and:
 | S7: Habits & Mood | 4 | 4 | ✅ Complete |
 | S8: Projects/CRM/Reading | 5 | 5 | ✅ Complete |
 | S8.5: Spec Gaps & Quick Wins | 11 | 11 | ✅ Complete |
-| SF: Dynasty Fantasy Calculator | 8 | 5 | 🟡 In progress (SF.06 next) |
-| S9: Trading Depth | 2 | 0 | Not started |
+| SF: Dynasty Fantasy Calculator | 8 | 5 | Parked post-pivot |
+| S9: Trading Depth | 2 | 2 | ✅ Complete |
 | S10: Intelligence | 5 | 0 | Not started |
 | S11: Dashboards | 4 | 0 | Not started |
 | S12: Polish & Ship | 6 | 0 | Not started |
 | **Total** | **72** | **56** | — |
 
-*Last updated: 2026-07-02 — Marcus OS migration pivot: queue frozen to NEXT-UP (S9.02, TRV2.01, VLT.01); remaining backlog moved to Parked (post-pivot).*
+*Last updated: 2026-07-02 — Marcus OS migration pivot follow-up: TRV2.01 completed via PR #68, VLT.01 completed via PR #70, and the active queue is closed; remaining backlog stays Parked (post-pivot).*
