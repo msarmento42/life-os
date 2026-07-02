@@ -8,7 +8,7 @@
 
 ## ⭐ NEXT-UP (2026-07 pivot — maintenance mode)
 
-1. S9.02 Trading wire-up (~15 min, already built)
+1. ~~S9.02 Trading wire-up~~ ✅ *(verified already merged via PR #33, 2026-06-28 — checkbox was stale, corrected 2026-07-02)*
 2. TRV2.01 Travel packing frontend (~1 hr, backend done)
 3. VLT.01 `/api/export/vault` — Markdown export of reviews-relevant data (see issue)
 
@@ -168,7 +168,7 @@ Scheduled Cowork sessions run automatically and:
 > Strategy analytics, discipline scoring, trip reflections.
 
 - [x] **S9.01** — Trading: strategy comparison dashboard — win rate, avg win/loss ratio, Sharpe ratio, max drawdown, profit factor per strategy. Frontend: strategy comparison table + radar chart. *(already implemented — StrategyComparison.jsx + /api/trading/strategies/comparison live; completed 2026-06-18)*
-- [ ] **S9.02** — Trading: add `followed_system` (boolean), `decision_id` (FK nullable) to trades. Behavioral discipline score (% of trades where system was followed). Frontend: discipline tracker. [issued #25]
+- [x] **S9.02** — Trading: add `followed_system` (boolean), `decision_id` (FK nullable) to trades. Behavioral discipline score (% of trades where system was followed). Frontend: discipline tracker. [issued #25] *(completed 2026-06-28 — PR #33, merged; DisciplineTracker.jsx already wired into Trading/index.jsx with its own tab, hits /api/trading/discipline; checkbox corrected 2026-07-02 during Marcus OS migration Task 5b, was stale)*
 
 ## Sprint 10: Cross-Module Intelligence
 
