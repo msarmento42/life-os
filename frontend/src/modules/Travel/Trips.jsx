@@ -364,6 +364,160 @@ function DocumentsTab({ tripId, docs, onSaved, toast }) {
   )
 }
 
+function PackingTab({ tripId, lists, onSaved, toast }) {
+  const [showAddList, setShowAddList] = useState(false)
+  const [newListName, setNewListName] = useState('')
+  const [addItemFor, setAddItemFor] = useState(null) // packing_list_id or null
+  const [itemForm, setItemForm] = useState({ name: '', category: 'General', quantity: 1 })
+
+  const createList = async () => {
+    try {
+      await axios.post('/api/travel/packing-lists', { trip_id: tripId, name: newListName || 'Packing List', is_template: false })
+      toast.success('Packing list created')
+      setShowAddList(false)
+      setNewListName('')
+      onSaved()
+    } catch { toast.error('Failed to create list') }
+  }
+
+  const deleteList = async (id) => {
+    try {
+      await axios.delete(`/api/travel/packing-lists/${id}`)
+      toast.success('Packing list removed')
+      onSaved()
+    } catch { toast.error('Failed to delete list') }
+  }
+
+  const addItem = async () => {
+    try {
+      await axios.post('/api/travel/packing-items', {
+        packing_list_id: addItemFor,
+        name: itemForm.name,
+        category: itemForm.category || 'General',
+        quantity: parseInt(itemForm.quantity) || 1,
+      })
+      toast.success('Item added')
+      setAddItemFor(null)
+      setItemForm({ name: '', category: 'General', quantity: 1 })
+      onSaved()
+    } catch { toast.error('Failed to add item') }
+  }
+
+  const toggleItem = async (item) => {
+    try {
+      await axios.put(`/api/travel/packing-items/${item.id}`, { is_checked: !item.is_checked })
+      onSaved()
+    } catch { toast.error('Failed to update item') }
+  }
+
+  const deleteItem = async (id) => {
+    try {
+      await axios.delete(`/api/travel/packing-items/${id}`)
+      onSaved()
+    } catch { toast.error('Failed to delete item') }
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <button className="btn-primary text-xs" style={{ '--btn-color': ORANGE }} onClick={() => setShowAddList(true)}>
+          <Plus className="w-3.5 h-3.5" /> New Packing List
+        </button>
+      </div>
+
+      {!lists?.length ? (
+        <EmptyState icon={Package} title="No packing lists yet"
+          description="Create a packing list and track what's in the bag."
+          action={{ label: 'New Packing List', onClick: () => setShowAddList(true) }} />
+      ) : (
+        <div className="space-y-4">
+          {lists.map(list => {
+            const total = list.items?.length || 0
+            const checked = list.items?.filter(i => i.is_checked).length || 0
+            return (
+              <div key={list.id} className="card">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Package className="w-4 h-4 text-orange-400" />
+                    <span className="font-semibold text-gray-200 text-sm">{list.name}</span>
+                    <span className="text-[10px] text-gray-500">{checked}/{total} packed</span>
+                  </div>
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                    <button className="btn-ghost text-xs" onClick={() => setAddItemFor(list.id)}>
+                      <Plus className="w-3.5 h-3.5" /> Item
+                    </button>
+                    <button className="icon-btn text-red-400 hover:text-red-300" onClick={() => deleteList(list.id)}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+                {!total ? (
+                  <p className="text-xs text-gray-500">No items yet.</p>
+                ) : (
+                  <div className="space-y-1">
+                    {list.items.map(item => (
+                      <div key={item.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-800/40 group">
+                        <input type="checkbox" checked={!!item.is_checked} onChange={() => toggleItem(item)}
+                          className="accent-orange-500 w-4 h-4" />
+                        <span className={`flex-1 text-sm ${item.is_checked ? 'line-through text-gray-600' : 'text-gray-200'}`}>
+                          {item.name}{item.quantity > 1 ? ` ×${item.quantity}` : ''}
+                        </span>
+                        <span className="text-[10px] text-gray-600">{item.category}</span>
+                        <button className="opacity-0 group-hover:opacity-100 icon-btn text-red-400 hover:text-red-300"
+                          onClick={() => deleteItem(item.id)}>
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {addItemFor === list.id && (
+                  <div className="mt-3 pt-3 border-t border-gray-800 flex gap-2 items-end">
+                    <div className="flex-1">
+                      <label className="label">Item</label>
+                      <input className="input" value={itemForm.name}
+                        onChange={e => setItemForm(f => ({ ...f, name: e.target.value }))}
+                        placeholder="Passport" autoFocus />
+                    </div>
+                    <div className="w-28">
+                      <label className="label">Category</label>
+                      <input className="input" value={itemForm.category}
+                        onChange={e => setItemForm(f => ({ ...f, category: e.target.value }))} />
+                    </div>
+                    <div className="w-16">
+                      <label className="label">Qty</label>
+                      <input className="input" type="number" min={1} value={itemForm.quantity}
+                        onChange={e => setItemForm(f => ({ ...f, quantity: e.target.value }))} />
+                    </div>
+                    <button className="btn-primary text-xs" style={{ '--btn-color': ORANGE }} onClick={addItem}>Add</button>
+                    <button className="btn-secondary text-xs" onClick={() => setAddItemFor(null)}>Cancel</button>
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {showAddList && (
+        <Modal title="New Packing List" onClose={() => setShowAddList(false)} size="sm">
+          <div className="space-y-3">
+            <div>
+              <label className="label">Name</label>
+              <input className="input" value={newListName} onChange={e => setNewListName(e.target.value)}
+                placeholder="Carry-on" autoFocus />
+            </div>
+            <div className="flex gap-3 justify-end">
+              <button className="btn-secondary" onClick={() => setShowAddList(false)}>Cancel</button>
+              <button className="btn-primary" style={{ '--btn-color': ORANGE }} onClick={createList}>Create</button>
+            </div>
+          </div>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
 // ── Trip Detail ───────────────────────────────────────────────────────────────
 
 function TripDetail({ tripId, onBack }) {
@@ -427,7 +581,7 @@ function TripDetail({ tripId, onBack }) {
   }
 
   const isCompleted = trip.status === 'completed'
-  const tabs = ['itinerary', 'expenses', 'documents', ...(isCompleted ? ['reflection'] : [])]
+  const tabs = ['itinerary', 'packing', 'expenses', 'documents', ...(isCompleted ? ['reflection'] : [])]
 
   return (
     <div>
@@ -584,6 +738,11 @@ function TripDetail({ tripId, onBack }) {
             </div>
           )}
         </div>
+      )}
+
+      {/* Packing */}
+      {tab === 'packing' && (
+        <PackingTab tripId={tripId} lists={trip.packing_lists || []} onSaved={load} toast={toast} />
       )}
 
       {/* Documents */}
