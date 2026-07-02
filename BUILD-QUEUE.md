@@ -2,24 +2,17 @@
 *The ordered backlog for scheduled build sessions. Each session picks the next `[ ]` item, builds it, and marks it `[x]`.*
 
 **Source of truth:** `PRODUCT-SPEC.md`
-**Last updated:** 2026-05-24
+**Last updated:** 2026-07-02 (Marcus OS migration pivot)
 
 ---
 
-## ⭐ NEXT-UP PRIORITY ORDER (set 2026-05-30 — overrides file order)
+## ⭐ NEXT-UP (2026-07 pivot — maintenance mode)
 
-> The build agent must build the first item in THIS list that is not yet `[x]`, before falling back to normal file order. Goal: make the Dynasty Fantasy calculator usable, then bring Life OS to a stable, daily-usable state.
->
-> 1. **SF.03** — Fantasy: Trade proposal dashboard
-> 2. **SF.04** — Fantasy: Trade builder
-> ~~3. **SF.05** — Fantasy: Pick inventory + valuation~~ ✅
-> 4. **SF.06** — Fantasy: News & alerts panel  ← *Dynasty calculator is usable after this*
-> 5. **S9.01 (Dashboard)** — Daily dashboard (Life OS home screen)
-> 6. **S10.01** — Backup system (one-click export/restore)
-> 7. **S10.03** — Performance: SQLite indexes + WAL mode
-> 8. **S10.06** — Final QA pass  ← *Life OS is stable/daily-usable after this*
->
-> After all 8 are `[x]`, resume normal top-to-bottom file order (SF.07, SF.08, S9 trading depth, S10 intelligence, remaining dashboards, remaining polish).
+1. S9.02 Trading wire-up (~15 min, already built)
+2. TRV2.01 Travel packing frontend (~1 hr, backend done)
+3. VLT.01 `/api/export/vault` — Markdown export of reviews-relevant data (see issue)
+
+**Then the queue closes.** All other unchecked items move to `## Parked (post-pivot)` — do not build them. Build sessions drop to Mon+Thu, then Sat-only.
 
 ---
 
@@ -78,6 +71,7 @@ Scheduled Cowork sessions run automatically and:
 - [x] **S4T.03** — Travel: wishlist destinations with priority ranking, travel map (Leaflet.js) showing visited countries/cities as pins. *(2026-05-17)*
 - [x] **S4T.04** — Travel: trip reflection form on completed trips (rating, highlights, lowlights, would_return), cost comparison chart across trips (cost-per-day). *(2026-05-17)*
 - [x] **S4T.05** — Travel: seed data — 5 past trips with full detail, 2 upcoming, 3 wishlist destinations, travel documents with expiry dates. *(2026-05-17)*
+- [ ] **TRV2.01** — Travel: Packing list frontend — Packing tab in the trip detail view against the existing packing-lists/packing-items backend endpoints (`routers/travel.py`). CRUD packing items, checkbox toggle. *(NEXT-UP — Marcus OS migration Task 5c; backend already built)*
 
 ## Sprint 5: Finance Depth
 
@@ -166,11 +160,8 @@ Scheduled Cowork sessions run automatically and:
 
 - [x] **SF.05** — Fantasy frontend: Pick inventory + valuation — per-league view of all tradeable future picks (2027, 2028). Shows estimated value, original owner, whether it's your own pick or acquired. Picks can be added to trade builder. *(completed 2026-06-02)*
 
-- [ ] **SF.06** — Fantasy frontend: News & alerts panel [issued #17] — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section.
 
-- [ ] **SF.07** — Fantasy: Pick valuation model refinement [issued #18] + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."
 
-- [ ] **SF.08** — Fantasy: Historical trade ingestion [issued #24] — pull all `trade` transactions from Sleeper for all 3 leagues. Store in SQLite. Build observed value dataset (player A traded for player B). Compute league-specific calibration factor vs. FantasyCalc. Surface divergences: "this league pays 20% more for QBs than FantasyCalc suggests."
 
 ## Sprint 9: Trading Depth
 
@@ -183,30 +174,46 @@ Scheduled Cowork sessions run automatically and:
 
 > Correlation engine, weekly synthesis, burnout warning, data quality.
 
-- [ ] **S8.01** — Correlation engine backend: `correlations` table (entity_a, entity_b, coefficient, sample_size, computed_at). Compute pairwise correlations across all date-indexed modules. Endpoint: GET /api/insights/correlations. [issued #26]
-- [ ] **S8.02** — Correlation engine frontend: "Insights" page with ranked correlation cards (e.g., "Sleep quality → next-day mood: +0.72"), filterable by module pair. [issued #27]
-- [ ] **S8.03** — Weekly synthesis endpoint: aggregate all module data for the past 7 days into a structured report (movements, anomalies, connections, pending decisions). Frontend: "Weekly Review" page. [issued #4]
-- [ ] **S8.04** — Burnout early warning: composite signal from sleep + mood + habits + stress + recovery. Endpoint returns risk level + recommended interventions. Frontend: warning banner on dashboard when risk is elevated. [issued #28]
-- [ ] **S8.05** — Data quality dashboard: per-module logging completeness (rolling 30-day). Frontend: health bars per module, warnings on modules below 70%. [issued #29]
 
 ## Sprint 11: Unified Dashboards
 
 > Daily, weekly, monthly, quarterly views.
 > ⚠️ **Note:** Items below use S9.xx codes due to a numbering collision with Sprint 9 (Trading). These are dashboard items, not trading items. Build sessions: read this sprint header to disambiguate.
 
-- [ ] **S9.01** *(Dashboard)* — Daily dashboard: today's mood/energy check-in, habit checklist, time blocks (planned), top priority project, trading alerts if positions exist, data quality pulse. [issued #19]
-- [ ] **S9.02** *(Dashboard)* — Weekly dashboard: mood trend line, time allocation pie (actual vs. plan), habit completion %, project progress bars, spending summary, relationships needing attention. [issued #30]
-- [ ] **S9.03** *(Dashboard)* — Monthly dashboard: net worth change + velocity, weight/body trend, habit streaks (best/worst), reading progress, mood averages, spending anomalies. [issued #31]
-- [ ] **S9.04** *(Dashboard)* — Quarterly dashboard: OKR progress with post-mortem prompts, savings goal progress, time vs. priorities alignment, trading strategy review, decision journal hit rate analysis. [issued #36]
+
+## Sprint V: Vault Exporter
+
+> New scope, added 2026-07 pivot. Local-only export -- no network calls, no vault-repo access.
+
+- [ ] **VLT.01** — `/api/export/vault` — new endpoint + CLI (`python -m services.vault_export`) writing Markdown (weekly time/energy rollup, health metric trends, active goals snapshot) to `exports/vault/` with vault frontmatter (`source: exporter`, `status: draft`). *(NEXT-UP — Marcus OS migration Task 6)*
 
 ## Sprint 12: Backup, Performance, Final Polish
 
 > Ship-quality reliability and fit-and-finish.
 
+- [x] **S10.04** — Code splitting: lazy-load each module in React (React.lazy + Suspense). Verify bundle sizes. [issued #22] *(completed 2026-06-29 — PR #45 "Lazy-load route modules", merged; checkbox corrected 2026-07-02 during Marcus OS migration, was stale)*
+
+---
+
+## Parked (post-pivot)
+
+> Moved here 2026-07-02 during the Marcus OS migration (plan §9.4): Life OS is maintenance-only now (see `PRODUCT-SPEC.md` freeze banner). These were unchecked, non-NEXT-UP backlog items at pivot time — do not build them absent an explicit `agios:lifeos-maintenance` label or a future un-freeze decision.
+
+- [ ] **SF.06** — Fantasy frontend: News & alerts panel [issued #17] — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section.
+- [ ] **SF.07** — Fantasy: Pick valuation model refinement [issued #18] + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."
+- [ ] **SF.08** — Fantasy: Historical trade ingestion [issued #24] — pull all `trade` transactions from Sleeper for all 3 leagues. Store in SQLite. Build observed value dataset (player A traded for player B). Compute league-specific calibration factor vs. FantasyCalc. Surface divergences: "this league pays 20% more for QBs than FantasyCalc suggests."
+- [ ] **S8.01** — Correlation engine backend: `correlations` table (entity_a, entity_b, coefficient, sample_size, computed_at). Compute pairwise correlations across all date-indexed modules. Endpoint: GET /api/insights/correlations. [issued #26]
+- [ ] **S8.02** — Correlation engine frontend: "Insights" page with ranked correlation cards (e.g., "Sleep quality → next-day mood: +0.72"), filterable by module pair. [issued #27]
+- [ ] **S8.03** — Weekly synthesis endpoint: aggregate all module data for the past 7 days into a structured report (movements, anomalies, connections, pending decisions). Frontend: "Weekly Review" page. [issued #4]
+- [ ] **S8.04** — Burnout early warning: composite signal from sleep + mood + habits + stress + recovery. Endpoint returns risk level + recommended interventions. Frontend: warning banner on dashboard when risk is elevated. [issued #28]
+- [ ] **S8.05** — Data quality dashboard: per-module logging completeness (rolling 30-day). Frontend: health bars per module, warnings on modules below 70%. [issued #29]
+- [ ] **S9.01** *(Dashboard)* — Daily dashboard: today's mood/energy check-in, habit checklist, time blocks (planned), top priority project, trading alerts if positions exist, data quality pulse. [issued #19]
+- [ ] **S9.02** *(Dashboard)* — Weekly dashboard: mood trend line, time allocation pie (actual vs. plan), habit completion %, project progress bars, spending summary, relationships needing attention. [issued #30]
+- [ ] **S9.03** *(Dashboard)* — Monthly dashboard: net worth change + velocity, weight/body trend, habit streaks (best/worst), reading progress, mood averages, spending anomalies. [issued #31]
+- [ ] **S9.04** *(Dashboard)* — Quarterly dashboard: OKR progress with post-mortem prompts, savings goal progress, time vs. priorities alignment, trading strategy review, decision journal hit rate analysis. [issued #36]
 - [ ] **S10.01** — Backup system: one-click JSON export of entire database, timestamped file, import/restore endpoint. Frontend: Settings page with backup/restore buttons + last backup date. [issued #20]
 - [ ] **S10.02** — Database migrations: set up Alembic for schema versioning. Create initial migration from current state. [issued #39]
 - [ ] **S10.03** — Performance: add SQLite indexes on all date columns + foreign keys. Enable WAL mode. Measure and optimize slow queries. [issued #21]
-- [ ] **S10.04** — Code splitting: lazy-load each module in React (React.lazy + Suspense). Verify bundle sizes. [issued #22]
 - [ ] **S10.05** — Keyboard shortcuts: document all shortcuts, add help overlay (Cmd+?), ensure all major actions have keyboard shortcuts. [issued #40]
 - [ ] **S10.06** — Final QA: smoke test every module's CRUD, verify all charts render, test dark/light mode toggle, test responsive breakpoints, fix any visual inconsistencies. [issued #23]
 
@@ -245,4 +252,4 @@ Scheduled Cowork sessions run automatically and:
 | S12: Polish & Ship | 6 | 0 | Not started |
 | **Total** | **72** | **56** | — |
 
-*Last updated: 2026-06-02 — SF.05 complete (Pick Inventory). 14 items remaining.*
+*Last updated: 2026-07-02 — Marcus OS migration pivot: queue frozen to NEXT-UP (S9.02, TRV2.01, VLT.01); remaining backlog moved to Parked (post-pivot).*

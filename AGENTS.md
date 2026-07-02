@@ -33,6 +33,10 @@ At each wake-up:
 - SQLite WAL mode is enabled; do not change PRAGMA settings unless explicitly scoped.
 - Typical verification: `flake8 . --max-line-length=120 --exclude=__pycache__,frontend` and `cd frontend && npm run build`.
 
+## Life OS maintenance-only rule (2026-07 pivot)
+
+Life OS is maintenance-only. If no `agios:ready-for-codex` or `agios:lifeos-maintenance` issue exists, stop — do not invent feature work from PRODUCT-SPEC.md; it is frozen.
+
 ## Enforcement
 
 - Scope check validates PR body and changed files against the linked issue.

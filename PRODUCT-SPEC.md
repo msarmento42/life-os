@@ -1,3 +1,8 @@
+# ⚠️ Spec status: FROZEN (2026-07) — Life OS is in maintenance mode
+Life OS pivoted from "replace all personal SaaS" to a **source system** within Marcus OS. The durable memory layer is now `msarmento42/vault` (private Markdown). ChatGPT Finance supersedes the Finance module for analysis; Finance/Travel/Tasks/Trading modules are maintenance-only. Reviews, goals, decisions, and people notes live in the vault, not here. The spec below is retained as historical reference for the modules that exist. New work is limited to: bug fixes, the vault exporter, and performance.
+
+---
+
 # Life OS — Product Specification v1.0
 *Last updated: 2026-04-26*
 
