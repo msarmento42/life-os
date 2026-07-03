@@ -1,0 +1,5 @@
+Generic single-database configuration with SQLite.
+
+Use `alembic revision --autogenerate -m "description"` to create new migrations.
+Use `alembic upgrade head` to apply all pending migrations.
+Use `alembic downgrade -1` to roll back one migration.
