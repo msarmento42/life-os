@@ -284,7 +284,7 @@ function QuickAdd({ onAdd, defaultStatus = 'inbox' }) {
           type="submit"
           disabled={!title.trim() || saving}
           className="btn-primary btn-sm"
-          style={{ backgroundColor: '#7c3aed' }}
+
         >
           {saving ? 'Adding…' : 'Add Task'}
         </button>
@@ -378,7 +378,7 @@ function TaskDetail({ task, onClose, onSave, onDelete }) {
           </button>
           <div className="flex gap-2">
             <button onClick={onClose} className="btn-ghost btn-sm">Cancel</button>
-            <button onClick={save} disabled={saving} className="btn-primary btn-sm" style={{ backgroundColor: '#7c3aed' }}>
+            <button onClick={save} disabled={saving} className="btn-primary btn-sm">
               {saving ? 'Saving…' : 'Save'}
             </button>
           </div>
