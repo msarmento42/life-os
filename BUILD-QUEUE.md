@@ -71,7 +71,7 @@ Scheduled Cowork sessions run automatically for maintenance-mode work only and:
 - [x] **S4T.03** — Travel: wishlist destinations with priority ranking, travel map (Leaflet.js) showing visited countries/cities as pins. *(2026-05-17)*
 - [x] **S4T.04** — Travel: trip reflection form on completed trips (rating, highlights, lowlights, would_return), cost comparison chart across trips (cost-per-day). *(2026-05-17)*
 - [x] **S4T.05** — Travel: seed data — 5 past trips with full detail, 2 upcoming, 3 wishlist destinations, travel documents with expiry dates. *(2026-05-17)*
-- [ ] **TRV2.01** — Travel: Packing list frontend — Packing tab in the trip detail view against the existing packing-lists/packing-items backend endpoints (`routers/travel.py`). CRUD packing items, checkbox toggle. *(NEXT-UP — Marcus OS migration Task 5c; backend already built)*
+- [x] **TRV2.01** — Travel: Packing list frontend — Packing tab in the trip detail view against the existing packing-lists/packing-items backend endpoints (`routers/travel.py`). CRUD packing items, checkbox toggle. *(completed 2026-07-02 — PR #68)*
 
 ## Sprint 5: Finance Depth
 
@@ -212,7 +212,7 @@ Scheduled Cowork sessions run automatically for maintenance-mode work only and:
 - [ ] **S9.03** *(Dashboard)* — Monthly dashboard: net worth change + velocity, weight/body trend, habit streaks (best/worst), reading progress, mood averages, spending anomalies. [issued #31]
 - [ ] **S9.04** *(Dashboard)* — Quarterly dashboard: OKR progress with post-mortem prompts, savings goal progress, time vs. priorities alignment, trading strategy review, decision journal hit rate analysis. [issued #36]
 - [ ] **S10.01** — Backup system: one-click JSON export of entire database, timestamped file, import/restore endpoint. Frontend: Settings page with backup/restore buttons + last backup date. [issued #20]
-- [ ] **S10.02** — Database migrations: set up Alembic for schema versioning. Create initial migration from current state. [issued #39]
+- [x] **S10.02** — Database migrations: set up Alembic for schema versioning. Create initial migration from current state. [issued #39] *(completed 2026-07-03 — PR #77)*
 - [ ] **S10.03** — Performance: add SQLite indexes on all date columns + foreign keys. Enable WAL mode. Measure and optimize slow queries. [issued #21]
 - [ ] **S10.05** — Keyboard shortcuts: document all shortcuts, add help overlay (Cmd+?), ensure all major actions have keyboard shortcuts. [issued #40]
 - [ ] **S10.06** — Final QA: smoke test every module's CRUD, verify all charts render, test dark/light mode toggle, test responsive breakpoints, fix any visual inconsistencies. [issued #23]
@@ -247,7 +247,7 @@ Scheduled Cowork sessions run automatically for maintenance-mode work only and:
 | S8.5: Spec Gaps & Quick Wins | 11 | 11 | ✅ Complete |
 | SF: Dynasty Fantasy Calculator | 8 | 5 | Parked post-pivot |
 | S9: Trading Depth | 2 | 2 | ✅ Complete |
-| S10: Intelligence | 5 | 0 | Not started |
+| S10: Intelligence | 5 | 1 | In progress |
 | S11: Dashboards | 4 | 0 | Not started |
 | S12: Polish & Ship | 6 | 0 | Not started |
 | **Total** | **72** | **56** | — |
