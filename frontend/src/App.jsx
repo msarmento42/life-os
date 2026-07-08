@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar'
 import BottomNav from './components/BottomNav'
@@ -7,6 +7,9 @@ import AnimatedRoutes from './components/AnimatedRoutes'
 import { ToastProvider } from './components/Toast'
 import KeyboardShortcutsOverlay from './components/KeyboardShortcutsOverlay';
 import { useKeyboardShortcut } from './hooks/useKeyboardShortcut';
+import { SkeletonRow } from './components/Skeleton';
+
+const Tasks = lazy(() => import('./modules/Tasks'));
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(() => {
