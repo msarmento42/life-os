@@ -1,64 +1,79 @@
 # AGENTS.md
 
-You are Codex, the implementation agent in the AGIOS autonomous build system.
+Life OS is Marcus's local-first personal operating system: FastAPI + SQLite
+backend, React/Vite frontend, single user, single machine, single port. It
+replaced several paid SaaS tools (Todoist, TripIt) and is now in
+**maintenance mode** — see [ADR-0006](docs/decisions/0006-life-os-maintenance-mode-pivot.md).
+It must not break: data already stored in `life_os.db` (no destructive
+migrations without a backup path), the local-only guarantee (no new cloud
+calls or telemetry — [ADR-0001](docs/decisions/0001-local-only-no-external-apis.md)),
+or the frontend build.
 
-## Operating Model
+This file is canonical for every agent working in this repo — human-directed
+or autonomous, any vendor. Provider files (`CLAUDE.md`, `GEMINI.md`, etc.) are
+generated stubs that point back here; if one contains real instructions, that
+is a bug — see `scripts/gen-adapters.sh`.
 
-You run as a heartbeat worker, waking every 1 hour and handling exactly one issue per wake-up. Do not wait for `@codex` mention comments; ready labels are the trigger.
+## Commands
 
-At each wake-up:
-1. Fetch and read `msarmento42/agios-control/CODEX_BRIEFING.md`.
-2. Find the next open `agios:ready-for-codex` issue in this repo with no linked open PR.
-3. Read `.agios/CLAUDE.md` and `.agios/scope.json` when present.
-4. Verify the issue contract. If malformed, add `agios:needs-scope`, remove `agios:ready-for-codex`, comment, and stop.
-5. Claim the issue with `agios:in-progress` and the `[AGIOS CLAIMED]` comment.
-6. Implement on a new branch and open a PR with `Closes #<issue-number>`.
-7. Run backend and frontend verification when feasible.
-8. Let CI and policy-gated auto-merge decide. Do not manually merge ordinary AGIOS implementation PRs.
+```bash
+# Backend (from repo root)
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python main.py                    # serves API + built frontend on :3000
 
-## Never Do
+# Frontend (from frontend/)
+npm install
+npm run build                     # required before python main.py serves real UI
+npm run dev                       # Vite dev server on :5173, API calls to :3000
 
-- Push directly to `main`.
-- Implement malformed or ambiguous issues.
-- Touch `.github/` unless the issue title starts with `agios infra:` and explicitly permits it.
-- Touch `.agios/` unless explicitly permitted.
-- Touch `*.env*`.
-- Change database files or generated lockfiles unless explicitly permitted.
-- Add work outside the issue's `Allowed paths`.
+# Lint (matches CI, .github/workflows/ci.yml)
+flake8 routers/ models/ services/ main.py --max-line-length=120 --ignore=E501,W503
 
-## Repo-Specific Rules
+# DB schema changes
+alembic revision --autogenerate -m "..."
+alembic upgrade head               # see ADR-0004 — do not hand-write ALTER TABLE
+```
 
-- Backend: FastAPI entry at `main.py`, routers in `routers/`, services in `services/`.
-- Frontend: React/Vite in `frontend/`.
-- SQLite WAL mode is enabled; do not change PRAGMA settings unless explicitly scoped.
-- Typical verification: `flake8 . --max-line-length=120 --exclude=__pycache__,frontend` and `cd frontend && npm run build`.
+`setup.sh` does all of the above in one shot for a clean machine.
 
-## Life OS maintenance-only rule (2026-07 pivot)
+CI (`ci.yml`) only lints Python. There is no automated frontend build/test
+gate and no automated backend test run on PRs — `npm run build` and anything
+in `tests/` are the author's responsibility to run locally before merging.
 
-Life OS is maintenance-only. If no `agios:ready-for-codex` or `agios:lifeos-maintenance` issue exists, stop — do not invent feature work from PRODUCT-SPEC.md; it is frozen.
+## Directory map
 
-## Enforcement
+- `main.py` — FastAPI entry point, router registration, serves `frontend/dist/`
+- `routers/`, `services/`, `models/` — backend, one file per domain module (finance, health, trading, fantasy, ...)
+- `frontend/src/modules/` — one folder per domain module, mirrors the backend split
+- `alembic/` — schema migrations (canonical, see ADR-0004). `database.py::_run_migrations()` is a legacy additive-column shim kept intentionally alongside it — do not delete without reading ADR-0004 first
+- `frontend/dist/`, `.venv/`, `node_modules/`, `life_os.db*` — generated/local, gitignored, never hand-edit
+- `docs/decisions/` — ADRs, the record of *why* (see below)
+- `docs/reference/`, `docs/runbooks/` — historical spec and operational docs, dated and owned, not instructions
+- `BUILD-QUEUE.md` / `BUILD-LOG.md` — build-session backlog and log for the scheduled Cowork build task; queue is closed (maintenance-only), still actively read/written by automation — leave at repo root
+- `.agios/` — config and scoped protocol for the AGIOS autonomous builder only (see `.agios/AGENTS.md`); do not touch unless the task is explicitly AGIOS infra work
+- `trading-bot/` — open question about its purpose/staleness, see `#TBD` decision issue; do not treat as authoritative trading-bot state (the real trading bot is a separate repo)
 
-- Scope check validates PR body and changed files against the linked issue.
-- Queue-health flags malformed ready issues and resets stale `agios:in-progress` locks.
-- Auto-merge requires green CI, `Closes #N`, `Auto-merge allowed: yes`, and non-HIGH risk.
-## Escalation Tier
+## Conventions not enforced by tooling
 
-In addition to the normal `agios:ready-for-codex` queue, you handle a **premium escalation queue** for issues that exceeded the free builder output cap.
+- New backend module = matching `models/<name>.py`, `routers/<name>.py`, router registered in `main.py`, and a mirrored `frontend/src/modules/<Name>/` folder (see `AUDIT_REPORT` removal note in ADR log — pattern is derivable by reading any existing module, e.g. `crm`).
+- Schema changes go through Alembic, never a hand-written `ALTER TABLE` in `database.py` (ADR-0004).
+- Changes to `routers/trading.py`, `models/trading.py`, `routers/finance.py`, or `models/finance.py` always need a human read before merge, even inside AGIOS — see [ADR-0005](docs/decisions/0005-trading-finance-require-human-review.md).
+- Frontend module folders follow the tab-layout pattern established in `Fantasy/index.jsx` when a module has multiple views.
+- Commit style in this repo: short imperative summary, sprint/issue code prefix when applicable (e.g. `S10.02: add Alembic for schema versioning`).
 
-**Trigger label:** `agios:escalate-codex`
+## Definition of done for a PR here
 
-These issues were attempted by the free builder chain (Gemini → GitHub Models → Cerebras → SambaNova → Cloudflare 70B) but could not be completed because existing files totalled more than 5,000 characters — beyond the output limit of free models. You have no such constraint.
+- Backend: `flake8` clean per the command above; `alembic upgrade head` still applies cleanly if migrations changed.
+- Frontend: `npm run build` succeeds with no new errors.
+- Trading/finance-module changes: called out explicitly in the PR body for human review (ADR-0005).
+- No new external API calls, cloud dependency, or telemetry (ADR-0001) — if a change looks like it needs one, stop and open a decision issue instead.
+- If the PR came from an AGIOS-managed issue: `Closes #N` in the body, changed files match the issue's `Allowed paths`.
 
-**Handling escalated issues:**
-1. Treat `agios:escalate-codex` as equivalent to `agios:ready-for-codex` for selection and claiming.
-2. Read the issue body carefully — it will follow the standard AGIOS contract.
-3. Implement in full. The issue was escalated specifically because the files are large; do not truncate or simplify.
-4. Open a PR with `Closes #<issue-number>` as usual.
-5. On completion: remove `agios:escalate-codex`, add `agios:done`.
-6. On failure or block: remove `agios:escalate-codex`, add `agios:blocked`, comment with reason.
+## Why things are the way they are
 
-**Priority:** Handle `agios:escalate-codex` issues before `agios:ready-for-codex` issues in the same repo.
-
-**If you cannot resolve:** Remove `agios:escalate-codex`, add `agios:escalate-claude`. The system will pick it up in the Claude escalation tier.
-
+`docs/decisions/` holds ADRs — the durable record of *why*, reconstructed from
+git history, issues, and prior docs where the rationale wasn't otherwise
+written down. Read the index before assuming a pattern is accidental. Open
+questions where the evidence was too thin to write an ADR are tracked as
+GitHub issues using the `decision` template, not asserted here.
