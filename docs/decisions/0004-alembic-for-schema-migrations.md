@@ -24,7 +24,7 @@ Two migration mechanisms exist side by side today: Alembic (canonical, for all
 new schema changes) and the legacy `_run_migrations()` shim (frozen, kept only
 for backward compatibility with existing deployments). Anyone touching
 `database.py` needs to know both exist and not "clean up" the shim without
-reading this ADR — see the open question in `#TBD` (decision issue) about
+reading this ADR — see the open question in [issue #105](https://github.com/msarmento42/life-os/issues/105) about
 whether that cleanup is still planned now that Life OS is maintenance-only.
 
 ## Alternatives Rejected

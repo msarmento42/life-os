@@ -52,7 +52,7 @@ in `tests/` are the author's responsibility to run locally before merging.
 - `docs/reference/`, `docs/runbooks/` — historical spec and operational docs, dated and owned, not instructions
 - `BUILD-QUEUE.md` / `BUILD-LOG.md` — build-session backlog and log for the scheduled Cowork build task; queue is closed (maintenance-only), still actively read/written by automation — leave at repo root
 - `.agios/` — config and scoped protocol for the AGIOS autonomous builder only (see `.agios/AGENTS.md`); do not touch unless the task is explicitly AGIOS infra work
-- `trading-bot/` — open question about its purpose/staleness, see `#TBD` decision issue; do not treat as authoritative trading-bot state (the real trading bot is a separate repo)
+- `trading-bot/` — open question about its purpose/staleness, see [issue #104](https://github.com/msarmento42/life-os/issues/104); do not treat as authoritative trading-bot state (the real trading bot is a separate repo)
 
 ## Conventions not enforced by tooling
 
