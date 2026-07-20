@@ -18,12 +18,34 @@ GITHUB_META_BLOCKED = [".github/", ".agios/"]
 TRUSTED_INFRA_PATHS = [
     ".github/workflows/",
     ".github/scripts/",
+    ".github/ISSUE_TEMPLATE/",
     "scripts/",
     "tools/",
     "builder-policy.json",
     ".gitignore",
     "CODEX_BRIEFING.md",
     "AGIOS_CONTEXT.md",
+    # Canonical instruction/decision infra added 2026-07 (see AGENTS.md /
+    # docs/decisions/) -- generated adapters, ADRs, and the root instruction
+    # files themselves. Keep this list in sync with scripts/gen-adapters.sh's
+    # manifest and docs/decisions/ as both grow.
+    "docs/",
+    "AGENTS.md",
+    ".agios/",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "COPILOT.md",
+    "KIMI.md",
+    "README.md",
+    "decision_log.md",
+    "vision.md",
+    "BUILD-QUEUE.md",
+    "BUILD-LOG.md",
+    # Deleted as part of the same 2026-07 cleanup (AUDIT_REPORT.md was
+    # redundant with routers/*.py, roadmap.md's status section was stale) --
+    # trusted so their removal itself passes the owner fast path.
+    "AUDIT_REPORT.md",
+    "roadmap.md",
 ]
 
 

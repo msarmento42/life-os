@@ -4,6 +4,13 @@
 
 ---
 
+> **2026-07-19:** the architectural decisions recorded in the 2026-06-02 entry
+> below (local-only, SQLite, trading/finance human-review gate) now have
+> canonical ADR form in `docs/decisions/0001`, `0002`, and `0005`. This file
+> stays in use going forward as the dated append-only strategist log — new
+> entries still belong here; durable architecture calls should also get an
+> ADR.
+
 ## 2026-06-02 — AGIOS onboarding baseline
 **Context:** life-os is a local-only project (no GitHub repo). AGIOS state files added for when the repo goes to GitHub, and for local planning context.
 

@@ -1,7 +1,9 @@
 # Life OS — Build Queue
+
+**Last reviewed:** 2026-07-19 · **Owner:** Marcus · kept at repo root (scheduled build automation reads this path — see `.agios/scope.json`)
 *The ordered backlog for scheduled build sessions. Each session picks the next `[ ]` item, builds it, and marks it `[x]`.*
 
-**Source of truth:** `PRODUCT-SPEC.md`
+**Source of truth:** `docs/reference/PRODUCT-SPEC.md`
 **Last updated:** 2026-07-02 (Marcus OS migration pivot follow-up)
 
 ---
@@ -20,7 +22,7 @@
 
 Scheduled Cowork sessions run automatically for maintenance-mode work only and:
 1. Read this file to find the next unchecked item
-2. Read `PRODUCT-SPEC.md` for the freeze banner and historical module context
+2. Read `docs/reference/PRODUCT-SPEC.md` for the freeze banner and historical module context
 3. Build only the scoped maintenance item; do not start parked feature work
 4. Test it (import check, API smoke test)
 5. Mark the item `[x]` with date completed
@@ -197,7 +199,7 @@ Scheduled Cowork sessions run automatically for maintenance-mode work only and:
 
 ## Parked (post-pivot)
 
-> Moved here 2026-07-02 during the Marcus OS migration (plan §9.4): Life OS is maintenance-only now (see `PRODUCT-SPEC.md` freeze banner). These were unchecked, non-NEXT-UP backlog items at pivot time — do not build them absent an explicit `agios:lifeos-maintenance` label or a future un-freeze decision.
+> Moved here 2026-07-02 during the Marcus OS migration (plan §9.4): Life OS is maintenance-only now (see `docs/reference/PRODUCT-SPEC.md` freeze banner). These were unchecked, non-NEXT-UP backlog items at pivot time — do not build them absent an explicit `agios:lifeos-maintenance` label or a future un-freeze decision.
 
 - [ ] **SF.06** — Fantasy frontend: News & alerts panel [issued #17] — filtered ESPN news for your roster players across all 3 leagues. Severity badges (urgent/notable/fyi). Value movers widget (30-day rises and falls). Trending adds from Sleeper. Add Fantasy to sidebar under a new "Fantasy" section.
 - [ ] **SF.07** — Fantasy: Pick valuation model refinement [issued #18] + pick-inclusive trade proposals — auto-add picks to proposal engine when player-only deal is unbalanced. Show "add your 2027 R2 to make this fair" or "ask for their 2028 R1 to balance this."

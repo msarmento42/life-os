@@ -1,3 +1,12 @@
+**Last reviewed:** 2026-07-19 · **Owner:** Marcus
+
+**Migration note:** the rationale for the Time & Attention, Decision Journal,
+and Unified Dashboard modules that were actually built from this synthesis is
+now recorded in [ADR-0007](../decisions/0007-time-decisions-dashboard-modules-from-council-blueprint.md).
+The other proposals here (Energy & Capacity Model, Goal Cascade, Thesis/Bet
+Tracker) were not built as of this review — treat as historical brainstorming,
+not a live roadmap.
+
 # Life OS Blueprint — Council Synthesis
 *Generated 2026-04-26 · 4-agent council (Analyst, Creative, Critic, Practitioner)*
 

@@ -2,6 +2,14 @@
 
 *Strategist reads this when this repo goes to GitHub. Until then, used for local planning.*
 
+> **2026-07-19:** the guardrails below now have canonical ADR form:
+> local-only ([ADR-0001](docs/decisions/0001-local-only-no-external-apis.md)),
+> single SQLite file ([ADR-0002](docs/decisions/0002-sqlite-single-datastore.md)),
+> trading/finance human-review gate
+> ([ADR-0005](docs/decisions/0005-trading-finance-require-human-review.md)).
+> This file remains the source for north-star metric / audience / out-of-scope
+> context that isn't itself an ADR-worthy architectural decision.
+
 ## What this project is
 
 A personal operating system replacing paid SaaS subscriptions (Todoist, TripIt, Monarch).

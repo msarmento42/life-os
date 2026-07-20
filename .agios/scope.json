@@ -27,7 +27,15 @@
     "allowed_paths": [
       ".github/**",
       ".agios/**",
-      "AGENTS.md"
+      "AGENTS.md",
+      "docs/**",
+      "scripts/**",
+      "CLAUDE.md",
+      "GEMINI.md",
+      "COPILOT.md",
+      "KIMI.md",
+      "decision_log.md",
+      "vision.md"
     ]
   }
 }
