@@ -31,7 +31,7 @@ TRUSTED_INFRA_PATHS = [
     # manifest and docs/decisions/ as both grow.
     "docs/",
     "AGENTS.md",
-    ".agios/AGENTS.md",
+    ".agios/",
     "CLAUDE.md",
     "GEMINI.md",
     "COPILOT.md",
