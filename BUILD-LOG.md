@@ -1,5 +1,7 @@
 # Life OS — Build Log
 
+**Last reviewed:** 2026-07-19 · **Owner:** Marcus · kept at repo root (scheduled build automation reads this path — see `.agios/scope.json`)
+
 Append-only log of scheduled build sessions. Newest entries at the bottom.
 
 ---
