@@ -56,7 +56,7 @@ in `tests/` are the author's responsibility to run locally before merging.
 
 ## Conventions not enforced by tooling
 
-- New backend module = matching `models/<name>.py`, `routers/<name>.py`, router registered in `main.py`, and a mirrored `frontend/src/modules/<Name>/` folder (see `AUDIT_REPORT` removal note in ADR log — pattern is derivable by reading any existing module, e.g. `crm`).
+- New backend module = matching `models/<name>.py`, `routers/<name>.py`, router registered in `main.py`, and a mirrored `frontend/src/modules/<Name>/` folder — pattern is derivable by reading any existing module, e.g. `crm`. **Exception:** `wiki` is deliberately filesystem-backed, not SQLite (ADR-0008) — do not add `models/wiki.py`.
 - Schema changes go through Alembic, never a hand-written `ALTER TABLE` in `database.py` (ADR-0004).
 - Changes to `routers/trading.py`, `models/trading.py`, `routers/finance.py`, or `models/finance.py` always need a human read before merge, even inside AGIOS — see [ADR-0005](docs/decisions/0005-trading-finance-require-human-review.md).
 - Frontend module folders follow the tab-layout pattern established in `Fantasy/index.jsx` when a module has multiple views.
